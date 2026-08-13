@@ -1,0 +1,42 @@
+@startuml UseCaseDiagram
+!pragma layout smetana
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #F5F5F5
+  BorderColor #333333
+}
+
+actor "User" as User
+
+rectangle System {
+  usecase "View Result" as UC1
+  usecase "Create Process" as UC2
+  usecase "Manage Process" as UC3
+  usecase "Configure Simulation" as UC4
+  usecase "Select Scheduling Algorithm" as UC5
+  usecase "Run Simulation" as UC6
+  usecase "Pause Simulation" as UC7
+  usecase "Perform Context Switch" as UC8
+  usecase "Save Simulation Data" as UC9
+}
+
+actor "System Clock" as SystemClock
+actor "Host File System" as HostFileSystem
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC5
+User --> UC8
+User --> UC9
+
+UC6 <-- SystemClock
+UC9 <-- HostFileSystem
+
+UC5 ..> UC6 : <<include>>
+UC6 ..> UC7 : <<extend>>\n(Simulation Running)
+
+@enduml
