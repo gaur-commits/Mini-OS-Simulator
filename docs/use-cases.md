@@ -1,36 +1,39 @@
 # Use Case specifications
 
 ## 1. Create Process
-Use Case	                  Create Process
-Primary                     Actor	User
-Stakeholders	User          wants to add a process to the simulation
-Preconditions	              The simulator is running and the user is on the process management screen.
-Postconditions	            A new valid process is created and added to the list of processes.
-Trigger	                    User selects the Create Process option.
+* **Use Case Name:** Create Process
+* **Primary Actor:** User
+* **Stakeholders:**
+  * User (wants to add a process to the simulation).
+  * System (needs valid process data to run the system clock).
+* **Preconditions:**
+  * OS Simulator program is started and is running.
+  * Properly formatted input file (input.txt) exists on the machine.
+* **Postconditions:**
+  * Multiple Process objects are created in the system's memory
+  * Processes are added to the controller's tracking list, ready for scheduling
+* **Trigger:** User selects the "Load Process" command in the terminal.
 
-Main Flow
+### Main Flow
 
-User selects Create Process.
-System asks the user to enter process details.
-User enters the required details, such as process name, arrival time, burst time and priority.
-System validates the entered details.
-System creates the process.
-System adds the process to the current simulation.
-System displays a confirmation to the user.
+1. The Simulation User selects the option to load a process file.
+2. The System prompts the user to enter the file name.
+3. The Simulation User inputs input.txt.
+4. The System opens the file and reads it line by line.
+5. For each line, the System parses the integers and creates a new Process object with its ID, Memory Requirement, and CPU Ticks.
+6. The System closes the file and displays a message: "Processes loaded successfully."  
 
-Alternate Flows
+### Alternate Flow 1: File Not Found
 
-A1. Selected process does not exist
+3a. The Simulation User inputs a file name that does not exist in the directory.  
+4a. The System catches a FileNotFoundException and displays an error: "Error: File not found."  
+5a. The System loops back to step 2 and prompts the user to enter the file name again.  
 
-At step 6, the system cannot find the specified process.
-System displays an error message.
-System returns to the management options.
+### Alternate Flow 2: Invalid Data Format
 
-A2. User cancels the operation
-
-At step 4 or 5, the user selects Cancel.
-System discards the current operation.
-System returns to the simulation management screen without changing the simulation.
+5b. The System encounters a line in the text file with letters instead of numbers, or missing commas.  
+6b. The System displays a warning: "Invalid data on line X. Skipping process."  
+7b. The System ignores that specific line, continues reading the rest of the valid lines to create the remaining processes, and finishes the setup.  
 
 ## 2. Manage Simulation
 
