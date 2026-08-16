@@ -130,5 +130,40 @@ System resumes the simulation from step 4 of the main flow.
 
 3b. The User inputs a negative number or zero (e.g., -500 or 0).  
 4b. The System detects the invalid boundary and displays an error: "Error: System RAM must be greater than 0 MB."  
-5b. The System loops back to step 2 and prompts the User to enter the total RAM capacity again.  
+5b. The System loops back to step 2 and prompts the User to enter the total RAM capacity again.
+
+## 7: Perform Context Switch
+* **Use Case Name:** Perform Context Switch
+* **Primary Actor:** System Clock
+* **Stakeholders:**
+  * System Clock (needs to accurately trigger the swap when the time limit hits).
+  * Simulation System / Scheduler (needs to fairly rotate CPU time among apps).
+  * Process (needs its exact progress saved so it doesn't lose its work).
+* **Preconditions:**
+  * The simulation loop is actively running.
+  * A Process is currently in the RUNNING state occupying the CPU.
+* **Postconditions:**
+  * The currently running process is safely paused and its progress is saved in a ProcessControlBlock.
+  * The next process in line is loaded and changed to the RUNNING state.
+* **Trigger:** The System Clock reaches the maximum time quantum limit (e.g., 5 ticks have passed).
+
+### Main Flow:
+1. The System Clock signals the Controller that the current time quantum has expired.
+2. The Scheduler pauses the currently RUNNING process.
+3. The System takes a snapshot of the process's remaining ticks and saves it in an immutable ProcessControlBlock.
+4. The System updates the paused process's state to READY and moves it to the back of the Ready Queue.
+5. The Scheduler pulls the next Process from the front of the Ready Queue.
+6. The System updates the newly pulled process's state to RUNNING and loads its saved ProcessControlBlock data.
+7. The System Clock resets its quantum timer, and execution begins on the new process.
+  
+### Alternate Flow 1: Process Finishes Early
+1a. The currently RUNNING process completes its final required CPU tick before the System Clock quantum expires.  
+2a. The System updates the finished process's state to TERMINATED.  
+3a. The MemoryManager is notified to free the RAM allocated to that specific process.  
+4a. The Scheduler skips saving a ProcessControlBlock (since the process is dead) and directly pulls the next process from the queue (Returns to Main Flow Step 5).
+
+### Alternate Flow 2: Ready Queue is Empty
+5a. The Scheduler attempts to pull the next process, but the Ready Queue is completely empty.  
+6a. The System sets the CPU state to IDLE.  
+7a. The System Clock continues to tick forward, checking for new processes to arrive or waiting for the simulation to end. 
 
