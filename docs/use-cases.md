@@ -99,3 +99,36 @@ At step 3, the system finds that no scheduling algorithm has been selected.
 System asks the user to select a scheduling algorithm.
 User selects an algorithm.
 System resumes the simulation from step 4 of the main flow.
+
+## 4. Configure Simulation
+* **Use Case Name:** Configure Simulation
+* **Primary Actor:** User
+* **Stakeholders:**
+  * User (wants to easily setup the system parameters like RAM before starting the simulation).
+  * System (needs valid hardware constraints in order to simulate the environment).
+* **Preconditions:**
+  * OS Simulator program is launched.
+* **Postconditions:**
+  * System parameters (e.g total RAM) are available and stored in the SimulationController.
+* **Trigger:** User selects the "Configure Simulation" command in the terminal.
+
+### Main Flow
+
+1. The User selects the "Configure Simulation" command.
+2. The System prompts the User to enter the total RAM capacity for the simulated system (e.g., "Enter total RAM in MB:").
+3. The User inputs a valid positive integer (e.g. 1024).
+4. The System instantiates the MemoryManager with the provided RAM capacity.
+5. The System displays a success message: "Simulation configured successfully. Total RAM set to 1024 MB."
+   
+### Alternate Flow 1: File Not Found
+
+3a. The User inputs non-numeric characters (e.g., typing "one thousand" instead of 1000).  
+4a. The System catches an InputMismatchException and displays an error: "Error: Invalid input. Please enter numerical digits only."  
+5a. The System loops back to step 2 and prompts the User to enter the total RAM capacity again.    
+
+### Alternate Flow 2: Invalid Data Format
+
+3b. The User inputs a negative number or zero (e.g., -500 or 0).  
+4b. The System detects the invalid boundary and displays an error: "Error: System RAM must be greater than 0 MB."  
+5b. The System loops back to step 2 and prompts the User to enter the total RAM capacity again.  
+
