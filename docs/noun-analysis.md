@@ -12,27 +12,27 @@
 
    * **Filter 1: Outside the system? (actor not class)**
 
-   * Discarded Nouns: user, machine, terminal. (Reason: These are humans or physical hardware outside our software code).
+     * Discarded Nouns: user, machine, terminal. (Reason: These are humans or physical hardware outside our software code).
 
-   * Discarded Verbs: selects, enter, inputs. (Reason: These are actions performed physically by the human user, not functions the system executes).
+     * Discarded Verbs: selects, enter, inputs. (Reason: These are actions performed physically by the human user, not functions the system executes).
 
    * **Filter 2: A property of something else? (attribute not class)**
 
-   * Discarded Nouns: file name, line, integers, id, memory requirement, cpu ticks, directory, message, command, file error, warning. (Reason: These are primitive data variables, properties of a process, or UI text strings).
+     * Discarded Nouns: file name, line, integers, id, memory requirement, cpu ticks, directory, message, command, file error, warning. (Reason: These are primitive data variables, properties of a process, or UI text strings).
 
-   * Discarded Verbs: exists, running, prompts, displays. (Reason: These describe simple UI text outputs or simple states/properties, rather than core architectural operations).
+     * Discarded Verbs: exists, running, prompts, displays. (Reason: These describe simple UI text outputs or simple states/properties, rather than core architectural operations).
 
    * **Filter 3: A synonym already listed? (merge them)**
 
-   * Merged Nouns: input file, setup. (Reason: 'Input file' is merged into the general file parsing logic; 'setup' is just a synonym for the creation process).
+     * Merged Nouns: input file, setup. (Reason: 'Input file' is merged into the general file parsing logic; 'setup' is just a synonym for the creation process).
 
-   * Merged Verbs: opens, closes, catches, encounters, ignores, continues. (Reason: These basic file-reading loop steps and error handling are merged into the overarching read and parse actions).
+     * Merged Verbs: opens, closes, catches, encounters, ignores, continues. (Reason: These basic file-reading loop steps and error handling are merged into the overarching read and parse actions).
 
    * **Filter 4: Vague or whole system? (discard)**
 
-  * Discarded Nouns: system, program. (Reason: Far too broad; they represent the entire application boundary, not a specific blueprint).
+      * Discarded Nouns: system, program. (Reason: Far too broad; they represent the entire application boundary, not a specific blueprint).
 
-  * Discarded Verbs: starts, finishes, loops. (Reason: Too generic; they just describe the general flow of time or language constructs, not a specific domain job).
+      * Discarded Verbs: starts, finishes, loops. (Reason: Too generic; they just describe the general flow of time or language constructs, not a specific domain job).
 
 ### 3. Surviving Classes and methods
 
