@@ -5,9 +5,9 @@
 ### 1. Raw Candidate List (Extracted Nouns):
 user, system, program, input file, machine, process, memory, controller, tracking list, terminal, command, file name, line, integers, id, memory requirement, cpu ticks, message, directory, file error, warning, setup.
 
-### 2. Discarded Candidates & Filters Applied:
-
-    * Filter 1 (Actors/External Entities): user, system, program, machine, terminal. (These are physical hardware, human users, or the overall application boundary).
+ ### 2. Discarded Candidates & Filters Applied
+    
+   * Filter 1 (Actors/External Entities): user, system, program, machine, terminal. (These are physical hardware, human users, or the overall application boundary).
 
    * Filter 2 (Attributes/Values): file name, line, integers, id, memory requirement, cpu ticks, directory, message, command. (These are just basic string or integer variables, not blueprints for a class).
 
