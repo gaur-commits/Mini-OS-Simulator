@@ -1,38 +1,55 @@
 # Noun-Verb Analysis
 
-## Use Case 1: Create Process - Noun/Verb Analysis
+## Use Case 1: Create Process - Combined Noun & Verb Analysis
 
-### 1. Raw Candidate List (Extracted Nouns):
-user, system, program, input file, machine, process, memory, controller, tracking list, terminal, command, file name, line, integers, id, memory requirement, cpu ticks, message, directory, file error, warning, setup.
+### 1. Raw Candidate List
 
- ### 2. Discarded Candidates & Filters Applied
-    
-   * Filter 1 (Actors/External Entities): user, system, program, machine, terminal. (These are physical hardware, human users, or the overall application boundary).
+   **Candidate Nouns:** user, system, program, input file, machine, process, memory, controller, tracking list, terminal, command, file name, line, integers, id, memory requirement, cpu ticks, message, directory, file error, warning, setup.
 
-   * Filter 2 (Attributes/Values): file name, line, integers, id, memory requirement, cpu ticks, directory, message, command. (These are just basic string or integer variables, not blueprints for a class).
+   **Candidate Verbs:** starts, running, exists, created, added, selects, load, prompts, enter, inputs, opens, reads, parses, closes, displays, loops, catches, encounters, ignores, continues, finishes.
 
-   * Filter 3 (Redundant/Synonyms): input file, setup. (Input file is just standard Java/Python File I/O, setup is a generic word for the whole process).
+### 2. Noun and Verb filtering
 
-   * Filter 4 (Actions/Events/UI): file error, warning. (These are exceptions and console printouts, not architectural classes).
+   * **Filter 1: Outside the system? (actor not class)**
 
-### 3. Surviving Classes (The Core Architecture):
+   * Discarded Nouns: user, machine, terminal. (Reason: These are humans or physical hardware outside our software code).
 
-  * SimulationController (Derived from "controller" - the boss managing the file loading)
+   * Discarded Verbs: selects, enter, inputs. (Reason: These are actions performed physically by the human user, not functions the system executes).
 
-  * Process (The actual data entity being created)
+   * **Filter 2: A property of something else? (attribute not class)**
 
-  * MemoryManager (Derived from "memory" - where the process will eventually live)
+   * Discarded Nouns: file name, line, integers, id, memory requirement, cpu ticks, directory, message, command, file error, warning. (Reason: These are primitive data variables, properties of a process, or UI text strings).
 
-  * ReadyQueue (Derived from "tracking list" - where the processes are stored after creation)
+   * Discarded Verbs: exists, running, prompts, displays. (Reason: These describe simple UI text outputs or simple states/properties, rather than core architectural operations).
 
-### 4. Verb Analysis (Identifying Methods):
+   * **Filter 3: A synonym already listed? (merge them)**
 
-  * read, parse, load -> Becomes loadProcesses(fileName) in SimulationController.
+   * Merged Nouns: input file, setup. (Reason: 'Input file' is merged into the general file parsing logic; 'setup' is just a synonym for the creation process).
 
-  * create, instantiate -> Becomes the constructor Process(id, memory, ticks).
+   * Merged Verbs: opens, closes, catches, encounters, ignores, continues. (Reason: These basic file-reading loop steps and error handling are merged into the overarching read and parse actions).
 
-  * add to tracking list -> Becomes enqueue(process) in ReadyQueue.
----
+   * **Filter 4: Vague or whole system? (discard)**
+
+  * Discarded Nouns: system, program. (Reason: Far too broad; they represent the entire application boundary, not a specific blueprint).
+
+  * Discarded Verbs: starts, finishes, loops. (Reason: Too generic; they just describe the general flow of time or language constructs, not a specific domain job).
+
+### 3. Surviving Classes and methods
+
+   * Surviving Nouns (The Classes):
+
+     * controller (becomes SimulationController)
+
+     * process (becomes Process)
+
+     * memory (becomes MemoryManager)
+
+     * tracking list (becomes ReadyQueue)
+
+   * Surviving Verbs (The Methods):
+
+     * load, reads, parses, created, added.
+   
 
 ## Use Case 2: Run Simulation - Noun/Vern Analysis
 
