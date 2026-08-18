@@ -36,69 +36,78 @@
 7b. The System ignores that specific line, continues reading the rest of the valid lines to create the remaining processes, and finishes the setup.  
 
 ## 2. Manage Simulation
+* **Use Case Name:** Manage Simulation
+* **Primary Actor:** User
+* **Stakeholders:**
+  * User (wants to control and modify the current simulation).
+  * System (needs to maintain a valid and consistent simulation state).
+* **Preconditions:**
+  * OS Simulator program is started and is running.
+  * The simulation has been initialized with at least one process.
+* **Postconditions:**
+  * The requested changes to the simulation are applied.
+  * If the operation is cancelled or invalid, the simulation remains unchanged.
+* **Trigger:** User selects the "Manage Simulation" command in the terminal.
 
-Use Case	                      Manage Simulation
-Primary Actor	                  User
-Stakeholders	User —            wants to control and modify the current simulation
-Preconditions	                  The simulator is running.
-Postconditions	                The requested changes to the simulation are applied, or the simulation remains unchanged if the operation is cancelled or invalid.
-Trigger	                        User selects Manage Simulation.
+### Main Flow
 
-Main Flow
+1. The Simulation User selects the "Manage Simulation" option.
+2. The System displays the available management options.
+3. The Simulation User selects an operation, such as viewing, modifying, or removing a process.
+4. The System asks the user to enter the required information.
+5. The Simulation User provides the required information.
+6. The System validates the request.
+7. The System applies the requested change to the simulation.
+8. The System displays the updated simulation information.
 
-User selects Manage Simulation.
-System displays the available management options.
-User selects an operation, such as viewing, modifying or removing a process.
-System asks for the required information.
-User provides the required information.
-System validates the request.
-System applies the requested change.
-System displays the updated simulation information.
-Alternate Flows
+### Alternate Flow 1: Selected Process Does Not Exist
 
-A1. Selected process does not exist
+6a. The System cannot find the specified process.
+7a. The System displays an error message: "Error: Process not found."
+8a. The System returns to the management options without changing the simulation.
 
-At step 6, the system cannot find the specified process.
-System displays an error message.
-System returns to the management options.
+### Alternate Flow 2: User Cancels the Operation
 
-A2. User cancels the operation
+4b. The Simulation User selects the "Cancel" option.
+5b. The System discards the current operation.
+6b. The System returns to the simulation management screen without changing the simulation.
 
-At step 4 or 5, the user selects Cancel.
-System discards the current operation.
-System returns to the simulation management screen without changing the simulation.
+## 3. Run Simulation
 
-## 3.  Run Simulation
+* **Use Case Name:** Run Simulation
+* **Primary Actor:** User
+* **Stakeholders:**
+  * User (wants to observe how the selected scheduling algorithm handles the processes).
+  * System (needs valid processes and a scheduling algorithm to execute the simulation).
+* **Preconditions:**
+  * At least one process has been created.
+  * A scheduling algorithm has been selected.
+* **Postconditions:**
+  * The simulation is completed.
+  * The simulation results are available for the user to view.
+* **Trigger:** User selects the "Run Simulation" command in the terminal.
 
-Use Case	                                Run Simulation
-Primary Actor	                            User
-Stakeholders                              User wants to observe how the selected scheduling algorithm handles the processes
-Preconditions	                            At least one process has been created and a scheduling algorithm has been selected.
-Postconditions	                          The simulation is completed and the results are available for the user to view.
-Trigger	                                  User selects Run Simulation.
+### Main Flow
 
-Main Flow
+1. The Simulation User selects the "Run Simulation" option.
+2. The System checks that valid processes are available.
+3. The System checks that a scheduling algorithm has been selected.
+4. The System runs the simulation using the selected scheduling algorithm.
+5. The System generates the simulation results.
+6. The System displays the results to the Simulation User.
 
-User selects Run Simulation.
-System checks that valid processes are available.
-System checks that a scheduling algorithm has been selected.
-System runs the simulation using the selected scheduling algorithm.
-System generates the simulation results.
-System displays the results to the user.
-Alternate Flows
+### Alternate Flow 1: No Processes Are Available
 
-A1. No processes are available
+2a. The System finds that no processes have been created.
+3a. The System displays a message: "No processes available. Please create at least one process."
+4a. The System returns to the main menu.
 
-At step 2, the system finds that no processes have been created.
-System displays a message asking the user to create at least one process.
-System returns to the main menu.
+### Alternate Flow 2: No Scheduling Algorithm Has Been Selected
 
-A2. No scheduling algorithm has been selected
-
-At step 3, the system finds that no scheduling algorithm has been selected.
-System asks the user to select a scheduling algorithm.
-User selects an algorithm.
-System resumes the simulation from step 4 of the main flow.
+3b. The System finds that no scheduling algorithm has been selected.
+4b. The System asks the Simulation User to select a scheduling algorithm.
+5b. The Simulation User selects a scheduling algorithm.
+6b. The System resumes the simulation from step 4 of the main flow.
 
 ## 4. Configure Simulation
 * **Use Case Name:** Configure Simulation
