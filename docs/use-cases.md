@@ -109,6 +109,49 @@
 5b. The Simulation User selects a scheduling algorithm.
 6b. The System resumes the simulation from step 4 of the main flow.
 
+## 4. Select Scheduling Algorithm
+
+* **Use Case Name:** Select Scheduling Algorithm
+* **Primary Actor:** User
+* **Stakeholders:**
+  * User (wants to choose the scheduling method that will be used to run the simulation).
+  * System (needs a valid scheduling algorithm to execute the simulation).
+* **Preconditions:**
+  * OS Simulator program is started and is running.
+  * The user has access to the simulation configuration.
+* **Postconditions:**
+  * A valid scheduling algorithm is selected and associated with the current simulation.
+* **Trigger:** User selects the "Select Scheduling Algorithm" command in the terminal.
+
+### Main Flow
+
+1. The Simulation User selects the "Select Scheduling Algorithm" option.
+2. The System displays the scheduling algorithms available in the simulator.
+3. The Simulation User selects a scheduling algorithm.
+4. The System checks whether the selected algorithm is valid.
+5. The System stores the selected algorithm as the scheduling method for the current simulation.
+6. The System informs the Simulation User that the scheduling algorithm has been selected.
+
+### Alternate Flow 1: Invalid Selection
+
+4a. The System determines that the selected option is invalid.
+5a. The System displays an error message: "Error: Invalid scheduling algorithm."
+6a. The System displays the available scheduling algorithms again.
+7a. The Simulation User selects a valid algorithm.
+8a. The System continues from step 4 of the main flow.
+
+### Alternate Flow 2: User Cancels Selection
+
+2b. The Simulation User selects the "Cancel" option.
+3b. The System keeps the previously selected algorithm, if any.
+4b. The System returns to the simulation configuration screen.
+
+### Alternate Flow 3: No Algorithm Available
+
+2c. The System finds that no scheduling algorithms are currently available.
+3c. The System displays a message: "No scheduling algorithms available."
+4c. The System returns to the simulation configuration screen.
+
 ## 4. Configure Simulation
 * **Use Case Name:** Configure Simulation
 * **Primary Actor:** User
@@ -175,4 +218,39 @@
 5a. The Scheduler attempts to pull the next process, but the Ready Queue is completely empty.  
 6a. The System sets the CPU state to IDLE.  
 7a. The System Clock continues to tick forward, checking for new processes to arrive or waiting for the simulation to end. 
+
+## 5. Pause Simulation
+
+* **Use Case Name:** Pause Simulation
+* **Primary Actor:** User
+* **Stakeholders:**
+  * User (wants to temporarily stop the simulation and continue it later).
+  * System (needs to preserve the current state of the simulation).
+* **Preconditions:**
+  * A simulation has been started and is currently running.
+* **Postconditions:**
+  * The simulation is paused.
+  * The current state of the simulation is preserved so that it can be resumed.
+* **Trigger:** User selects the "Pause Simulation" command while a simulation is running.
+
+### Main Flow
+
+1. The Simulation User selects the "Pause Simulation" option.
+2. The System checks whether the simulation is currently running.
+3. The System temporarily stops the simulation.
+4. The System preserves the current state of the simulation.
+5. The System changes the simulation status to **Paused**.
+6. The System informs the Simulation User that the simulation has been paused.
+
+### Alternate Flow 1: Simulation Is Not Running
+
+2a. The System determines that the simulation is not currently running.
+3a. The System displays a message: "Simulation cannot be paused because it is not running."
+4a. The System returns to the current screen without changing the simulation state.
+
+### Alternate Flow 2: Simulation Already Completed
+
+2b. The System determines that the simulation has already completed.
+3b. The System displays a message: "A completed simulation cannot be paused."
+4b. The System keeps the simulation results unchanged.
 
