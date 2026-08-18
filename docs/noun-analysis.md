@@ -32,3 +32,45 @@ user, system, program, input file, machine, process, memory, controller, trackin
   * create, instantiate -> Becomes the constructor Process(id, memory, ticks).
 
   * add to tracking list -> Becomes enqueue(process) in ReadyQueue.
+---
+
+## Use Case 2: Run Simulation - Noun/Vern Analysis
+
+## 1. Raw Candidate List (Extracted Nouns)
+
+user, simulation user, system, simulation, process, scheduling algorithm, simulation result, command, terminal, option, message, main menu, step, main flow, alternate flow.
+
+## 2. Discarded Candidates and Filters Applied
+
+- **Filter 1 — Actors/External Entities:** `user`, `simulation user`, `system`.  
+  They interact with or represent the complete application, so they are not core domain classes.
+
+- **Filter 2 — Attributes/Values:** `command`, `option`.  
+  They are simple input values, not independent objects requiring classes.
+
+- **Filter 3 — Redundant/Synonyms:** `simulation user`, `simulation`.  
+  `Simulation User` means the same as `User`. The simulation operation is managed by `SimulationController`, so a separate `Simulation` class is unnecessary here.
+
+- **Filter 4 — Actions/Events/UI:** `terminal`, `message`, `main menu`, `step`, `main flow`, `alternate flow`.  
+  These describe the interface, displayed output, or use-case sequence rather than architectural classes.
+
+## 3. Surviving Classes (Core Architecture)
+
+- **SimulationController** — validates the required data, runs the simulation, and coordinates the result.
+- **Process** — represents each process used in the simulation.
+- **SchedulingAlgorithm** — represents the selected algorithm, such as FCFS, SJF, Priority, or Round Robin.
+- **SimulationResult** — stores the generated output, such as waiting time, turnaround time, and execution order.
+
+## 4. Verb Analysis (Possible Operations)
+
+| Extracted verb/action | Possible method | What happens? |
+|---|---|---|
+| selects algorithm | `selectAlgorithm()` | Stores the scheduling algorithm chosen by the user. |
+| checks processes | `validateProcesses()` | Confirms that at least one valid process exists. |
+| checks algorithm | `validateAlgorithm()` | Confirms that an algorithm has been selected. |
+| runs simulation | `runSimulation()` | Executes the processes using the selected algorithm. |
+| generates results | `generateResult()` | Creates the simulation output. |
+| displays results | `displayResult()` | Shows the result to the user. |
+| returns to menu | `returnToMainMenu()` | Goes back when the simulation cannot run. |
+| resumes simulation | `resumeSimulation()` | Continues after the user selects an algorithm. |
+
