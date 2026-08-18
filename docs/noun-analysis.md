@@ -51,45 +51,50 @@
      * load, reads, parses, created, added.
    
 
-## Use Case 2: Run Simulation - Noun/Vern Analysis
+## Use Case 3: Run Simulation - Combined Noun & Verb Analysis
 
-## 1. Raw Candidate List (Extracted Nouns)
+### 1. Raw Candidate List
 
-user, simulation user, system, simulation, process, scheduling algorithm, simulation result, command, terminal, option, message, main menu, step, main flow, alternate flow.
+**Candidate Nouns:** user, simulation user, system, simulation, process, scheduling algorithm, algorithm, method, simulation results, results, command, terminal, option, message, main menu, simulation configuration.
 
-## 2. Discarded Candidates and Filters Applied
+**Candidate Verbs:** selects, checks, available, created, selected, runs, executes, generates, displays, observes, view, finds, asks, returns, resumes, continues.
 
-- **Filter 1 — Actors/External Entities:** `user`, `simulation user`, `system`.  
-  They interact with or represent the complete application, so they are not core domain classes.
+### 2. Noun and Verb filtering
 
-- **Filter 2 — Attributes/Values:** `command`, `option`.  
-  They are simple input values, not independent objects requiring classes.
+- **Filter 1: Outside the system? (actor not class)**
 
-- **Filter 3 — Redundant/Synonyms:** `simulation user`, `simulation`.  
-  `Simulation User` means the same as `User`. The simulation operation is managed by `SimulationController`, so a separate `Simulation` class is unnecessary here.
+  - Discarded Nouns: user, simulation user, terminal. (Reason: The user is an external actor interacting with the simulator, while the terminal is the external interface through which the interaction takes place).
+  - Discarded Verbs: selects, observes, view. (Reason: These are actions performed by the human user rather than operations performed by the simulator).
 
-- **Filter 4 — Actions/Events/UI:** `terminal`, `message`, `main menu`, `step`, `main flow`, `alternate flow`.  
-  These describe the interface, displayed output, or use-case sequence rather than architectural classes.
+- **Filter 2: A property of something else? (attribute not class)**
 
-## 3. Surviving Classes (Core Architecture)
+  - Discarded Nouns: command, option, message, simulation results, results, main menu, simulation configuration. (Reason: These represent user-interface elements, output data, or information/state associated with the simulation rather than independent objects).
+  - Discarded Verbs: displays, asks, returns. (Reason: These mainly describe user-interface or control-flow behavior rather than core simulation operations).
 
-- **SimulationController** — validates the required data, runs the simulation, and coordinates the result.
-- **Process** — represents each process used in the simulation.
-- **SchedulingAlgorithm** — represents the selected algorithm, such as FCFS, SJF, Priority, or Round Robin.
-- **SimulationResult** — stores the generated output, such as waiting time, turnaround time, and execution order.
+- **Filter 3: A synonym already listed? (merge them)**
 
-## 4. Verb Analysis (Possible Operations)
+  - Merged Nouns: algorithm, method → scheduling algorithm. (Reason: Both refer to the scheduling method selected for executing the simulation).
+  - Merged Nouns: simulation results, results → results. (Reason: Both refer to the output produced after running the simulation).
+  - Merged Verbs: executes → runs. (Reason: Executing the simulation and running the simulation represent the same operation).
+  - Merged Verbs: finds, available → checks. (Reason: These describe the process of checking whether the required processes or scheduling algorithm are available).
 
-| Extracted verb/action | Possible method | What happens? |
-|---|---|---|
-| selects algorithm | `selectAlgorithm()` | Stores the scheduling algorithm chosen by the user. |
-| checks processes | `validateProcesses()` | Confirms that at least one valid process exists. |
-| checks algorithm | `validateAlgorithm()` | Confirms that an algorithm has been selected. |
-| runs simulation | `runSimulation()` | Executes the processes using the selected algorithm. |
-| generates results | `generateResult()` | Creates the simulation output. |
-| displays results | `displayResult()` | Shows the result to the user. |
-| returns to menu | `returnToMainMenu()` | Goes back when the simulation cannot run. |
-| resumes simulation | `resumeSimulation()` | Continues after the user selects an algorithm. |
+- **Filter 4: Vague or whole system? (discard)**
+
+  - Discarded Nouns: system, simulation. (Reason: System represents the whole application, while simulation is too broad if it is being treated as the overall system operation rather than a specific domain object).
+  - Discarded Verbs: continues, resumes, created, selected. (Reason: These mainly describe the state or flow of an operation rather than specific responsibilities that should become methods).
+
+### 3. Surviving Classes and methods
+
+- **Surviving Nouns (The Classes):**
+
+  - process (becomes `Process`)
+  - scheduling algorithm (becomes `SchedulingAlgorithm`)
+
+- **Surviving Verbs (The Methods):**
+
+  - checks
+  - runs
+  - generates
 
 
 ## Use Case 3: Manage Simulation - Combined Noun & Verb Analysis
