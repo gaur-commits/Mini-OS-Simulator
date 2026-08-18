@@ -17,10 +17,18 @@ user, system, program, input file, machine, process, memory, controller, trackin
 
 ### 3. Surviving Classes (The Core Architecture):
 
-   SimulationController (Derived from "controller" - the boss managing the file loading)
+  * SimulationController (Derived from "controller" - the boss managing the file loading)
 
-   Process (The actual data entity being created)
+  * Process (The actual data entity being created)
 
-   MemoryManager (Derived from "memory" - where the process will eventually live)
+  * MemoryManager (Derived from "memory" - where the process will eventually live)
 
-   ReadyQueue (Derived from "tracking list" - where the processes are stored after creation)
+  * ReadyQueue (Derived from "tracking list" - where the processes are stored after creation)
+
+### 4. Verb Analysis (Identifying Methods):
+
+  * read, parse, load -> Becomes loadProcesses(fileName) in SimulationController.
+
+  * create, instantiate -> Becomes the constructor Process(id, memory, ticks).
+
+  * add to tracking list -> Becomes enqueue(process) in ReadyQueue.
