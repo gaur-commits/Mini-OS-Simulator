@@ -12,3 +12,18 @@
 | **Collaborators** | Process |
 | | SchedulingAlgorithm |
 | | SimulationResult |
+
+
+---
+
+## CRC Card — MemoryManager
+
+| **Class** | **MemoryManager** |
+|---|---|
+| **Responsibilities** | Track total available system memory |
+| | Allocate memory blocks to processes |
+| | Deallocate memory when process finishes |
+| | Validate process memory requirements |
+| | Maintain free/allocated memory state |
+| **Collaborators** | Process |
+| | SimulationController |
