@@ -1,4 +1,4 @@
----
+# CRC Cards 
 
 ## CRC Card — SimulationController
 
@@ -13,70 +13,51 @@
 | • Run simulation | |
 | • Generate/store simulation results | |
 
+---
+
+## CRC Card — MemoryManager
+
+| Class | MemoryManager |
+| :--- | :--- |
+| **Responsibilities** | **Collaborators** |
+| • Track total available system memory | • Process |
+| • Allocate memory blocks to processes | • SimulationController |
+| • Deallocate memory when process finishes | |
+| • Validate process memory requirements | |
+| • Maintain free/allocated memory state | |
 
 ---
 
-## CRC Card: MemoryManager
+## CRC Card — ReadyQueue
 
-| **Class** | **MemoryManager** |
-|---|---|
-| **Responsibilities** | Track total available system memory |
-| | Allocate memory blocks to processes |
-| | Deallocate memory when process finishes |
-| | Validate process memory requirements |
-| | Maintain free/allocated memory state |
-| **Collaborators** | Process |
-| | SimulationController |
-
+| Class | ReadyQueue |
+| :--- | :--- |
+| **Responsibilities** | **Collaborators** |
+| • Maintain the collection of ready processes | • Process |
+| • Add/remove processes | • SchedulingAlgorithm |
+| • Find/check processes | |
+| • Provide the next process to be scheduled | |
+| • Maintain process ordering | |
 
 ---
 
-## CRC Card: ReadyQueue
+## CRC Card — Process
 
-| **Class** | **ReadyQueue** |
-|---|---|
-| **Responsibilities** | Maintain the collection of ready processes |
-| | Add/remove processes |
-| | Find/check processes |
-| | Provide the next process to be scheduled |
-| | Maintain process ordering |
-| **Collaborators** | Process |
-| | SchedulingAlgorithm |
-
-
----
-
-## CRC Card: Process
-
-| **Class** | **Process** | |
-|---|---|
-| **Responsibilities** | Hold static identity data (Process ID, Required RAM, Total CPU Ticks) |
-| | Track current execution status (Ready, Running, Terminated) |
-| | Get and Update status (getState(), setState()) | 
-| **Collaborators** | (None. It is a passive data entity) |
-
-
----
-
-## CRC Card: Process
-
-| **Class** | **Process** |
-|---|---|
-| **Responsibilities** | Hold static identity data (Process ID, Required RAM, Total CPU Ticks) |
-| | Track current execution status (Ready, Running, Terminated) |
-| | Get and update status (`getState()`, `setState()`) |
-| **Collaborators** | None. It is a passive data entity |
-
+| Class | Process |
+| :--- | :--- |
+| **Responsibilities** | **Collaborators** |
+| • Hold static identity data (Process ID, Required RAM, Total CPU Ticks) | • None (Passive data entity) |
+| • Track current execution status (Ready, Running, Terminated) | |
+| • Get and update status (`getState()`, `setState()`) | |
 
 ---
 
 ## CRC Card — Scheduler
 
-| Class |Scheduler |
+| Class | Scheduler |
 | :--- | :--- |
 | **Responsibilities** | **Collaborators** |
 | • Check availability of ready processes before execution | • Process |
 | • Execute scheduling algorithms (FCFS, SJF, Priority, Round Robin) | • SimulationController |
 | • Pick next process based on arrival time, burst time, or priority | |
 | • Calculate and generate metrics (Waiting Time, Turnaround Time) | |
-
