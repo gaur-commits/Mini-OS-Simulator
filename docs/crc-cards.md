@@ -55,8 +55,8 @@
 ## CRC Card — Scheduler
 
 | Class | Scheduler |
-| :--- | :--- |
-| **Responsibilities** | **Collaborators** |
+|---|---|
+| Responsibilities | Collaborators |
 | • Check availability of ready processes before execution | • Process |
 | • Execute scheduling algorithms (FCFS, SJF, Priority, Round Robin) | • SimulationController |
 | • Pick next process based on arrival time, burst time, or priority | |
