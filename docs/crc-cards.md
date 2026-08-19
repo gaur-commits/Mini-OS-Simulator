@@ -57,3 +57,12 @@
 
 
 ---
+
+## CRC Card: Process
+
+| **Class** | **Process** |
+|---|---|
+| **Responsibilities** | Hold static identity data (Process ID, Required RAM, Total CPU Ticks) |
+| | Track current execution status (Ready, Running, Terminated) |
+| | Get and update status (`getState()`, `setState()`) |
+| **Collaborators** | None. It is a passive data entity |
