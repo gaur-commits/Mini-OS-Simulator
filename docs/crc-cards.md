@@ -72,7 +72,7 @@
 
 ## CRC Card — Scheduler
 
-| Class | Scheduler |
+| Class  Scheduler |
 | :--- | :--- |
 | **Responsibilities** | **Collaborators** |
 | • Check availability of ready processes before execution | • Process |
