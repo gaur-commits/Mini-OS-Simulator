@@ -6,8 +6,8 @@
 | :--- | :--- |
 | **Responsibilities** | **Collaborators** |
 | • Maintain processes | • Process |
-| • Add/remove/find processes | • SchedulingAlgorithm |
-| • Validate simulation requests | • SimulationResult |
+| • Add/remove/find processes | • Scheduler |
+| • Validate simulation requests | |
 | • Maintain/update simulation state | |
 | • Store selected scheduling algorithm | |
 | • Run simulation | |
@@ -34,7 +34,7 @@
 | :--- | :--- |
 | **Responsibilities** | **Collaborators** |
 | • Maintain the collection of ready processes | • Process |
-| • Add/remove processes | • SchedulingAlgorithm |
+| • Add/remove processes | • Scheduler |
 | • Find/check processes | |
 | • Provide the next process to be scheduled | |
 | • Maintain process ordering | |
@@ -48,7 +48,7 @@
 | **Responsibilities** | **Collaborators** |
 | • Hold static identity data (Process ID, Required RAM, Total CPU Ticks) | • None (Passive data entity) |
 | • Track current execution status (Ready, Running, Terminated) | |
-| • Get and update status (`getState()`, `setState()`) | |
+| • Get and update status (getState(), setState()) | |
 
 ---
 
