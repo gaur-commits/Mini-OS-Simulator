@@ -1,4 +1,4 @@
-## CRC Card — SimulationController
+## CRC Card: SimulationController
 
 | **Class** | **Simulation** |
 |---|---|
@@ -16,7 +16,7 @@
 
 ---
 
-## CRC Card — MemoryManager
+## CRC Card: MemoryManager
 
 | **Class** | **MemoryManager** |
 |---|---|
@@ -48,10 +48,12 @@
 
 ## CRC Card: Process
 
-| **Class: Process** | |
+| **Class** | **Process** | |
 |---|---|
 | **Responsibilities** | Hold static identity data (Process ID, Required RAM, Total CPU Ticks) |
-| | Track current execution status (Ready, Running, Terminated)|
-| | Get and Update status (`getState()`, `setState()`)| 
-**Collaborators** |
-| | (None. It is a passive data entity) |
+| | Track current execution status (Ready, Running, Terminated) |
+| | Get and Update status (`getState()`, `setState()`) | 
+| **Collaborators** | (None. It is a passive data entity) |
+
+
+---
