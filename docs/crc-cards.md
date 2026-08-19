@@ -27,3 +27,18 @@
 | | Maintain free/allocated memory state |
 | **Collaborators** | Process |
 | | SimulationController |
+
+
+---
+
+## CRC Card: ReadyQueue
+
+| **Class** | **ReadyQueue** |
+|---|---|
+| **Responsibilities** | Maintain the collection of ready processes |
+| | Add/remove processes |
+| | Find/check processes |
+| | Provide the next process to be scheduled |
+| | Maintain process ordering |
+| **Collaborators** | Process |
+| | SchedulingAlgorithm |
