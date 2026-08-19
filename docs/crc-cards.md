@@ -1,17 +1,17 @@
-## CRC Card: SimulationController
+---
 
-| **Class** | **Simulation** |
-|---|---|
-| **Responsibilities** | Maintain processes |
-| | Add/remove/find processes |
-| | Validate simulation requests |
-| | Maintain/update simulation state |
-| | Store selected scheduling algorithm |
-| | Run simulation |
-| | Generate/store simulation results |
-| **Collaborators** | Process |
-| | SchedulingAlgorithm |
-| | SimulationResult |
+## CRC Card — SimulationController
+
+| Class | SimulationController |
+| :--- | :--- |
+| **Responsibilities** | **Collaborators** |
+| • Maintain processes | • Process |
+| • Add/remove/find processes | • SchedulingAlgorithm |
+| • Validate simulation requests | • SimulationResult |
+| • Maintain/update simulation state | |
+| • Store selected scheduling algorithm | |
+| • Run simulation | |
+| • Generate/store simulation results | |
 
 
 ---
@@ -72,7 +72,7 @@
 
 ## CRC Card — Scheduler
 
-| Class  Scheduler |
+| Class |Scheduler |
 | :--- | :--- |
 | **Responsibilities** | **Collaborators** |
 | • Check availability of ready processes before execution | • Process |
