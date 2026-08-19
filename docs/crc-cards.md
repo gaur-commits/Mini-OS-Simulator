@@ -1,4 +1,4 @@
-## CRC Card — Simulation
+## CRC Card — SimulationController
 
 | **Class** | **Simulation** |
 |---|---|
