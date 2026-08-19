@@ -49,7 +49,53 @@
    * Surviving Verbs (The Methods):
 
      * load, reads, parses, created, added.
-   
+
+## Use Case 2: Manage Simulation - Combined Noun & Verb Analysis
+
+### 1. Raw Candidate List
+
+**Candidate Nouns:** user, simulation user, system, simulation, process, operation, management option, information, required information, request, change, simulation management screen, command, terminal, error message, updated simulation information, current operation.
+
+**Candidate Verbs:** selects, displays, viewing, modifying, removing, asks, enter, provides, validates, applies, changes, cancels, discards, returns, find, exists, initialized, running.
+
+### 2. Noun and Verb filtering
+
+- **Filter 1: Outside the system? (actor not class)**
+
+  - Discarded Nouns: user, simulation user, terminal. (Reason: The user is an external actor interacting with the simulator, while the terminal is the external interface through which the interaction takes place).
+  - Discarded Verbs: selects, enter, provides. (Reason: These are actions performed by the human user, not operations performed by the system).
+
+- **Filter 2: A property of something else? (attribute not class)**
+
+  - Discarded Nouns: management option, information, required information, change, command, error message, updated simulation information, current operation. (Reason: These represent input data, output information, temporary state, or details associated with a simulation operation rather than independent objects).
+  - Discarded Verbs: displays, asks, returns. (Reason: These mainly describe user-interface/output behavior rather than operations representing independent domain responsibilities).
+
+- **Filter 3: A synonym already listed? (merge them)**
+
+  - Merged Nouns: simulation user → user. (Reason: Both refer to the same actor interacting with the simulator).
+  - Merged Verbs: viewing → displays, modifying → changes, removing → changes. (Reason: These represent specific forms of displaying or changing the state of a process/simulation and do not need separate representations as duplicate concepts).
+  - Merged Verbs: discards → cancels. (Reason: Discarding the current operation is the result of cancelling it).
+
+- **Filter 4: Vague or whole system? (discard)**
+
+  - Discarded Nouns: system, operation, request. (Reason: These are too broad or generic to represent specific objects in the simulation model).
+  - Discarded Verbs: running, exists, initialized. (Reason: These describe the state or lifecycle of the simulation rather than a specific operation that should become a method).
+
+### 3. Surviving Classes and methods
+
+- **Surviving Nouns (The Classes):**
+
+  - simulation (becomes `Simulation`)
+  - process (becomes `Process`)
+
+- **Surviving Verbs (The Methods):**
+
+  - validates
+  - applies
+  - changes
+  - displays
+  - cancels
+  - find
 
 ## Use Case 3: Run Simulation - Combined Noun & Verb Analysis
 
@@ -96,52 +142,5 @@
   - runs
   - generates
 
-
-## Use Case 3: Manage Simulation - Combined Noun & Verb Analysis
-
-### 1. Raw Candidate List
-
-**Candidate Nouns:** user, simulation user, system, simulation, process, operation, management option, information, required information, request, change, simulation management screen, command, terminal, error message, updated simulation information, current operation.
-
-**Candidate Verbs:** selects, displays, viewing, modifying, removing, asks, enter, provides, validates, applies, changes, cancels, discards, returns, find, exists, initialized, running.
-
-### 2. Noun and Verb filtering
-
-- **Filter 1: Outside the system? (actor not class)**
-
-  - Discarded Nouns: user, simulation user, terminal. (Reason: The user is an external actor interacting with the simulator, while the terminal is the external interface through which the interaction takes place).
-  - Discarded Verbs: selects, enter, provides. (Reason: These are actions performed by the human user, not operations performed by the system).
-
-- **Filter 2: A property of something else? (attribute not class)**
-
-  - Discarded Nouns: management option, information, required information, change, command, error message, updated simulation information, current operation. (Reason: These represent input data, output information, temporary state, or details associated with a simulation operation rather than independent objects).
-  - Discarded Verbs: displays, asks, returns. (Reason: These mainly describe user-interface/output behavior rather than operations representing independent domain responsibilities).
-
-- **Filter 3: A synonym already listed? (merge them)**
-
-  - Merged Nouns: simulation user → user. (Reason: Both refer to the same actor interacting with the simulator).
-  - Merged Verbs: viewing → displays, modifying → changes, removing → changes. (Reason: These represent specific forms of displaying or changing the state of a process/simulation and do not need separate representations as duplicate concepts).
-  - Merged Verbs: discards → cancels. (Reason: Discarding the current operation is the result of cancelling it).
-
-- **Filter 4: Vague or whole system? (discard)**
-
-  - Discarded Nouns: system, operation, request. (Reason: These are too broad or generic to represent specific objects in the simulation model).
-  - Discarded Verbs: running, exists, initialized. (Reason: These describe the state or lifecycle of the simulation rather than a specific operation that should become a method).
-
-### 3. Surviving Classes and methods
-
-- **Surviving Nouns (The Classes):**
-
-  - simulation (becomes `Simulation`)
-  - process (becomes `Process`)
-
-- **Surviving Verbs (The Methods):**
-
-  - validates
-  - applies
-  - changes
-  - displays
-  - cancels
-  - find
 
 
