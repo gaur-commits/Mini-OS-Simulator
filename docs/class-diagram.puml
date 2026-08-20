@@ -1,1 +1,96 @@
+@startuml SimulationClassDiagram
 
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+class SimulationController {
+  - processes : List<Process>
+  - simulationState : String
+  --
+  + addProcess(p : Process) : void
+  + removeProcess(id : int) : void
+  + findProcess(id : int) : Process
+  + validateSimulationRequest() : boolean
+  + updateSimulationState() : void
+  + runSimulation() : void
+  + generateResults() : void
+}
+
+class MemoryManager {
+  - totalMemory : int
+  - freeMemory : int
+  - allocatedMemory : int
+  --
+  + allocateMemory(p : Process) : boolean
+  + deallocateMemory(p : Process) : void
+  + validateMemoryRequirement(p : Process) : boolean
+  + getFreeMemory() : int
+}
+
+class ReadyQueue {
+  - queue : List<Process>
+  --
+  + addProcess(p : Process) : void
+  + removeProcess(p : Process) : void
+  + findProcess(id : int) : Process
+  + containsProcess(id : int) : boolean
+  + getNextProcess() : Process
+  + reorder() : void
+}
+
+class Process {
+  - processId : int
+  - requiredRAM : int
+  - totalCpuTicks : int
+  - state : String
+  --
+  + getState() : String
+  + setState(state : String) : void
+}
+
+abstract class Scheduler {
+  --
+  + checkAvailability() : boolean
+  + {abstract} pickNextProcess() : Process
+  + calculateWaitingTime() : double
+  + calculateTurnaroundTime() : double
+}
+
+class FCFSScheduler {
+  + pickNextProcess() : Process
+}
+
+class SJFScheduler {
+  + pickNextProcess() : Process
+}
+
+class PriorityScheduler {
+  + pickNextProcess() : Process
+}
+
+class RoundRobinScheduler {
+  - timeQuantum : int
+  --
+  + pickNextProcess() : Process
+}
+
+' ---------- Inheritance ----------
+Scheduler <|-- FCFSScheduler
+Scheduler <|-- SJFScheduler
+Scheduler <|-- PriorityScheduler
+Scheduler <|-- RoundRobinScheduler
+
+' ---------- Associations / Aggregations / Compositions ----------
+SimulationController "1" *-- "0..*" Process : maintains
+SimulationController "1" --> "1" Scheduler : uses
+SimulationController "1" --> "1" MemoryManager : uses
+SimulationController "1" --> "1" ReadyQueue : uses
+
+MemoryManager "1" ..> "0..*" Process : allocates/deallocates
+
+ReadyQueue "1" o-- "0..*" Process : holds
+ReadyQueue "1" <-- "1" Scheduler : pulls from
+
+Scheduler "1" ..> "0..*" Process : selects
+
+@enduml
