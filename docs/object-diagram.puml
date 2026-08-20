@@ -1,1 +1,47 @@
+@startuml
+title Mini OS Simulator - Object Diagram
+
+object "simulation : Simulation" as sim {
+  state = "Running"
+  schedulingAlgorithm = "Round Robin"
+}
+
+object "p1 : Process" as p1 {
+  processId = "P01"
+  requiredRAM = 256 MB
+  totalCPUTicks = 8
+  state = "Running"
+}
+
+object "p2 : Process" as p2 {
+  processId = "P02"
+  requiredRAM = 128 MB
+  totalCPUTicks = 5
+  state = "Ready"
+}
+
+object "p3 : Process" as p3 {
+  processId = "P03"
+  requiredRAM = 512 MB
+  totalCPUTicks = 10
+  state = "Ready"
+}
+
+object "rr : SchedulingAlgorithm" as rr {
+  name = "Round Robin"
+  timeQuantum = 2
+}
+
+object "result : SimulationResult" as result {
+  completedProcesses = 0
+  elapsedTicks = 4
+}
+
+sim o-- p1 : contains
+sim o-- p2 : contains
+sim o-- p3 : contains
+sim --> rr : uses
+sim --> result : stores
+
+@enduml
 
