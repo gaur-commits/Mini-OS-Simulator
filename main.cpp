@@ -43,13 +43,22 @@ public:
              << " | Ticks: " << cpuTicks 
              << " | State: " << state << endl;
     }
+
+    void displayInfo(bool showDetailed) {
+        if (showDetailed) {
+            cout << "Process ID: " << processId 
+                 << " | Ticks: " << cpuTicks 
+                 << " | State: " << state << " (Detailed View)" << endl;
+        } else {
+            displayInfo(); 
+        }
+    }
 };
 
 // Abstract Base Class
 class Scheduler {
 public:
     // Pure Virtual Function (Abstraction)
-    // Note: Passing by reference (&) instead of pointer (*) to keep it simple
     virtual void executeProcess(Process& p) = 0; 
 };
 
