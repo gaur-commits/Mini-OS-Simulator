@@ -3,116 +3,109 @@
 
 using namespace std;
 
-// 1. ENCAPSULATION
+// Class demonstrating Encapsulation (private data, public methods)
 class Process {
 private:
     int processId;
-    int cpuTicks; // Time needed to execute
+    int cpuTicks; 
     string state;
 
-    // 2. FRIEND FUNCTION
-    friend void printProcessInfo(Process p); 
-
 public:
-    // 3. CONSTRUCTOR OVERLOADING (Compile-Time Polymorphism)
+    // Constructor Overloading
+    // 1st Constructor: Normal process
     Process(int id, int ticks) {
         processId = id;
         cpuTicks = ticks;
         state = "Ready";
     }
 
+    // 2nd Constructor: Process with a custom starting state
     Process(int id, int ticks, string startState) {
         processId = id;
         cpuTicks = ticks;
         state = startState;
     }
 
-    // Getters & Setters 
+    // Getters & Setters
     int getId() { return processId; }
     int getTicks() { return cpuTicks; }
     string getState() { return state; }
     void setState(string newState) { state = newState; }
 
-    // 7. OPERATOR OVERLOADING (Compile-Time Polymorphism)
+    // Operator Overloading for SJF comparison
     bool operator<(Process& otherProcess) {
         return this->cpuTicks < otherProcess.cpuTicks;
     }
+
+    // Simple display method instead of a friend function
+    void displayInfo() {
+        cout << "Process ID: " << processId 
+             << " | Ticks: " << cpuTicks 
+             << " | State: " << state << endl;
+    }
 };
 
-// FRIEND FUNCTION IMPLEMENTATION
-void printProcessInfo(Process p) {
-    cout << "DEBUG -> Process ID: " << p.processId 
-         << " | CPU Ticks: " << p.cpuTicks 
-         << " | State: " << p.state << endl;
-}
-
-// 4. ABSTRACTION
+// Abstract Base Class
 class Scheduler {
 public:
-    // Pure Virtual Function 
-    virtual void executeProcess(Process* p) = 0; 
+    // Pure Virtual Function (Abstraction)
+    // Note: Passing by reference (&) instead of pointer (*) to keep it simple
+    virtual void executeProcess(Process& p) = 0; 
 };
 
-// 5. HIERARCHICAL INHERITANCE
-// Child 1 inheriting from Scheduler
+// Hierarchical Inheritance - Child 1
 class FCFSScheduler : public Scheduler {
 public:
-    // 6. METHOD OVERRIDING (Run-Time Polymorphism)
-    void executeProcess(Process* p) override {
-        cout << "[FCFS Scheduler] First-Come, First-Served picking Process " << p->getId() << "..." << endl;
-        p->setState("Running");
-        cout << ">> Process " << p->getId() << " state changed to: " << p->getState() << endl;
+    // Method Overriding
+    void executeProcess(Process& p) override {
+        cout << "\n[FCFS] Executing Process " << p.getId() << "..." << endl;
+        p.setState("Running");
+        cout << "Status Updated: Process " << p.getId() << " is now " << p.getState() << endl;
     }
 };
 
+// Hierarchical Inheritance - Child 2
 class SJFScheduler : public Scheduler {
 public:
-    // 6. METHOD OVERRIDING (Run-Time Polymorphism)
-    void executeProcess(Process* p) override {
-        cout << "[SJF Scheduler] Shortest-Job-First picking Process " << p->getId() << "..." << endl;
-        p->setState("Running");
-        cout << ">> Process " << p->getId() << " state changed to: " << p->getState() << endl;
+    // Method Overriding
+    void executeProcess(Process& p) override {
+        cout << "\n[SJF] Executing Shortest Process " << p.getId() << "..." << endl;
+        p.setState("Running");
+        cout << "Status Updated: Process " << p.getId() << " is now " << p.getState() << endl;
     }
 };
 
-// MAIN
 int main() {
-    cout << "--- OS Simulator Initialized ---\n" << endl;
+    cout << "--- Starting OS Simulation ---\n" << endl;
 
-    // 1. Testing Constructor Overloading
-    Process p1(101, 50);                 // Uses Constructor A
-    Process p2(102, 10, "Waiting");      // Uses Constructor B
+    // Creating processes to test constructor overloading
+    Process p1(101, 50);                 
+    Process p2(102, 10, "Waiting");      
 
-    // 2. Testing Friend Function
-    printProcessInfo(p1);
-    printProcessInfo(p2);
-    cout << endl;
+    // Display initial states
+    p1.displayInfo();
+    p2.displayInfo();
 
     // Testing Operator Overloading
-    cout << "--- Testing Operator Overloading ---" << endl;
+    cout << "\nChecking burst times for SJF..." << endl;
     if (p2 < p1) { 
-        cout << ">> Process " << p2.getId() << " is shorter and should run first in SJF!\n" << endl;
+        cout << "Process " << p2.getId() << " has fewer ticks than Process " << p1.getId() << endl;
     }
 
-    // 3. Testing Run-Time Polymorphism using Pointers
+    // Run-Time Polymorphism setup
+    Scheduler* schedulerPtr; // Base pointer
     
-    // Create the specific algorithm objects
-    FCFSScheduler fcfsAlgo;      
-    SJFScheduler sjfAlgo;        
-
-    // Create our single Base Pointer (The "Universal Remote")
-    Scheduler* coreScheduler;       
+    FCFSScheduler fcfs;      
+    SJFScheduler sjf;        
     
-    // --- RUNNING FCFS ---
-    coreScheduler = &fcfsAlgo;           // Point to FCFS
-    coreScheduler->executeProcess(&p1);  // Pass the memory address of p1
+    // Running FCFS Algorithm
+    schedulerPtr = &fcfs;           // Point base pointer to child object
+    schedulerPtr->executeProcess(p1); 
 
-    cout << endl;
+    // Running SJF Algorithm
+    schedulerPtr = &sjf;            
+    schedulerPtr->executeProcess(p2); 
 
-    // --- RUNNING SJF ---
-    coreScheduler = &sjfAlgo;            // Switch pointer to SJF
-    coreScheduler->executeProcess(&p2);  // Pass the memory address of p2
-
-    cout << "\n--- OS Simulator Shutdown ---" << endl;
+    cout << "\n--- Simulation Ended ---" << endl;
     return 0;
 }
