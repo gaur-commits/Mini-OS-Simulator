@@ -92,7 +92,7 @@ int main() {
         cout << "Process " << p2.getId() << " has fewer ticks than Process " << p1.getId() << endl;
     }
 
-    // 3. Testing Inheritance & Method Overriding (Directly, no pointers!)
+    // 3. Testing Inheritance & Method Overriding
     FCFSScheduler fcfs;      
     SJFScheduler sjf;        
     
