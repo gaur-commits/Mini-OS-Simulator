@@ -78,7 +78,7 @@ public:
 int main() {
     cout << "--- Starting OS Simulation ---\n" << endl;
 
-    // Creating processes to test constructor overloading
+    // 1. Testing Constructor Overloading
     Process p1(101, 50);                 
     Process p2(102, 10, "Waiting");      
 
@@ -86,25 +86,21 @@ int main() {
     p1.displayInfo();
     p2.displayInfo();
 
-    // Testing Operator Overloading
+    // 2. Testing Operator Overloading
     cout << "\nChecking burst times for SJF..." << endl;
     if (p2 < p1) { 
         cout << "Process " << p2.getId() << " has fewer ticks than Process " << p1.getId() << endl;
     }
 
-    // Run-Time Polymorphism setup
-    Scheduler* schedulerPtr; // Base pointer
-    
+    // 3. Testing Inheritance & Method Overriding (Directly, no pointers!)
     FCFSScheduler fcfs;      
     SJFScheduler sjf;        
     
-    // Running FCFS Algorithm
-    schedulerPtr = &fcfs;           // Point base pointer to child object
-    schedulerPtr->executeProcess(p1); 
+    // Running FCFS Algorithm directly
+    fcfs.executeProcess(p1); 
 
-    // Running SJF Algorithm
-    schedulerPtr = &sjf;            
-    schedulerPtr->executeProcess(p2); 
+    // Running SJF Algorithm directly
+    sjf.executeProcess(p2); 
 
     cout << "\n--- Simulation Ended ---" << endl;
     return 0;
