@@ -33,10 +33,8 @@ public:
     void setState(string newState) { state = newState; }
 
     // Operator Overloading for SJF comparison
-    bool operator<(Process& otherProcess) {
-        return this->cpuTicks < otherProcess.cpuTicks;
-    }
-
+    friend bool operator<(Process& otherProcess);
+    
     // Simple display method instead of a friend function
     void displayInfo() {
         cout << "Process ID: " << processId 
@@ -54,6 +52,11 @@ public:
         }
     }
 };
+
+bool operator<(Process& otherProcess) {
+        return this->cpuTicks < otherProcess.cpuTicks;
+    }
+
 
 // Abstract Base Class
 class Scheduler {
