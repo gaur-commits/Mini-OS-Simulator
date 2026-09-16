@@ -7,18 +7,21 @@ private:
     int processId;
     int cpuTicks; 
     string state;
-
+    static int totalProcesses;
+    
 public:
     Process(int id, int ticks) {
         processId = id;
         cpuTicks = ticks;
         state = "Ready";
+        totalProcesses++;
     }
 
     Process(int id, int ticks, string startState) {
         processId = id;
         cpuTicks = ticks;
         state = startState;
+        totalProcesses++;
     }
 
     int getId() { return processId; }
@@ -40,21 +43,39 @@ public:
         } else {
             displayInfo(); 
         }
+
+    static int getTotalProcesses() {
+        return totalProcesses;
     }
 
     friend bool operator<(const Process& p1, const Process& p2);
+    friend ostream& operator<<(ostream& out, const Process& p);
 }; 
 
 bool operator<(const Process& p1, const Process& p2) {
     return p1.cpuTicks < p2.cpuTicks;
 }
+ostream& operator<<(ostream& out, const Process& p) {
+    out << "Process ID: " << p.processId 
+        << " | Ticks: " << p.cpuTicks 
+        << " | State: " << p.state;
+    return out;
+}
+int Process::totalProcesses = 0;
 
 class Scheduler {
 public:
+    class Info {
+        public:
+            string algorithmName;
+            void show() {
+                cout << "Algorithm in use: " << algorithmName << endl;
+            }
+        };
     virtual void executeProcess(Process& p) = 0; 
 };
 
-class FCFSScheduler : public Scheduler {
+class FCFSScheduler final: public Scheduler {
 public:
     void executeProcess(Process& p) override {
         cout << "\n[FCFS] Executing Process " << p.getId() << "..." << endl;
@@ -63,7 +84,7 @@ public:
     }
 };
 
-class SJFScheduler : public Scheduler {
+class SJFScheduler final: public Scheduler {
 public:
     void executeProcess(Process& p) override {
         cout << "\n[SJF] Executing Shortest Process " << p.getId() << "..." << endl;
