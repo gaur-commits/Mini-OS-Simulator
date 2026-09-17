@@ -43,7 +43,7 @@ public:
         } else {
             displayInfo(); 
         }
-
+    }
     static int getTotalProcesses() {
         return totalProcesses;
     }
