@@ -11,23 +11,23 @@ private:
     
 public:
     Process(int id, int ticks) {
-        processId = id;
-        cpuTicks = ticks;
-        state = "Ready";
+       this->processId = id;
+        this->cpuTicks = ticks;
+        this->state = "Ready";
         totalProcesses++;
     }
 
     Process(int id, int ticks, string startState) {
-        processId = id;
-        cpuTicks = ticks;
-        state = startState;
+       this->processId = id;
+        this->cpuTicks = ticks;
+        this->state = startState;
         totalProcesses++;
     }
 
     int getId() { return processId; }
     int getTicks() { return cpuTicks; }
     string getState() { return state; }
-    void setState(string newState) { state = newState; }
+    void setState(string newState) { this->state = newState; }
 
     void displayInfo() {
         cout << "Process ID: " << processId 
