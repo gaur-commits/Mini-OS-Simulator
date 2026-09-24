@@ -63,6 +63,27 @@ ostream& operator<<(ostream& out, const Process& p) {
 }
 int Process::totalProcesses = 0;
 
+class PriorityProcess : virtual public Process {
+protected:
+    int priorityLevel;
+public:
+    PriorityProcess(int id, int ticks, int priority) : Process(id, ticks) {
+        priorityLevel = priority;
+    }
+};
+
+class BackgroundProcess : virtual public Process {
+public:
+    BackgroundProcess(int id, int ticks) : Process(id, ticks) {}
+};
+
+class SystemProcess : public PriorityProcess, public BackgroundProcess {
+public:
+    SystemDaemon(int id, int ticks, int priority) 
+        : Process(id, ticks), PriorityProcess(id, ticks, priority), BackgroundProcess(id, ticks) {
+    }
+};
+
 class Scheduler {
 public:
     class Info {
