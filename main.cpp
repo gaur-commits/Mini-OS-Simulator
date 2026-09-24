@@ -68,7 +68,7 @@ protected:
     int priorityLevel;
 public:
     PriorityProcess(int id, int ticks, int priority) : Process(id, ticks) {
-        priorityLevel = priority;
+        this->priorityLevel = priority;
     }
 };
 
@@ -79,7 +79,7 @@ public:
 
 class SystemProcess : public PriorityProcess, public BackgroundProcess {
 public:
-    SystemDaemon(int id, int ticks, int priority) 
+    SystemProcess(int id, int ticks, int priority) 
         : Process(id, ticks), PriorityProcess(id, ticks, priority), BackgroundProcess(id, ticks) {
     }
 };
@@ -132,17 +132,24 @@ int main() {
     p1.displayInfo();
     p2.displayInfo();
 
-    cout << "\nChecking burst times for SJF..." << endl;
-    if (p2 < p1) {   
-        cout << "Process " << p2.getId() << " has fewer ticks than Process " << p1.getId() << endl;
-    }
+    Process* ptr1 = &p1; 
+    Process* ptr2 = &p2;
+
+    ptr1->displayInfo();
+    ptr2->displayInfo();
 
     FCFSScheduler fcfs;      
     SJFScheduler sjf;        
     
-    fcfs.executeProcess(p1); 
-    sjf.executeProcess(p2); 
+    Scheduler* activeScheduler; 
 
+    cout << "\n[System] Swapping to FCFS Algorithm..." << endl;
+    activeScheduler = &fcfs; 
+    activeScheduler->executeProcess(*ptr1); 
+
+    cout << "\n[System] Swapping to SJF Algorithm..." << endl;
+    activeScheduler = &sjf; 
+    activeScheduler->executeProcess(*ptr2);
     cout << "\n--- Simulation Ended ---" << endl;
     return 0;
 }
