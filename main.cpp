@@ -72,6 +72,9 @@ public:
                 cout << "Algorithm in use: " << algorithmName << endl;
             }
         };
+    virtual void printSchedulerType() {
+        cout << "Generic OS Scheduler" << endl;
+    }
     virtual void executeProcess(Process& p) = 0; 
 };
 
@@ -82,6 +85,9 @@ public:
         p.setState("Running");
         cout << "Status Updated: Process " << p.getId() << " is now " << p.getState() << endl;
     }
+    virtual void printSchedulerType() {
+        cout << "First-Come-First-Served (FCFS) Schedulder" << endl;
+    }
 };
 
 class SJFScheduler final: public Scheduler {
@@ -90,6 +96,9 @@ public:
         cout << "\n[SJF] Executing Shortest Process " << p.getId() << "..." << endl;
         p.setState("Running");
         cout << "Status Updated: Process " << p.getId() << " is now " << p.getState() << endl;
+    }
+    virtual void printSchedulerType() {
+        cout << "Shortest-Job-First (SJF) Scheduler" << endl;
     }
 };
 
