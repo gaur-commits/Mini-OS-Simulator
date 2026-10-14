@@ -148,6 +148,39 @@ public:
     }
 };
 
+class MemoryManager {
+private:
+    int totalMemory;
+    int freeMemory;
+
+public:
+    MemoryManager(int total) {
+        this->totalMemory = total;
+        this->freeMemory = total;
+    }
+
+    bool validateMemoryRequirement(int size) {
+        return size <= freeMemory;
+    }
+
+    void allocateMemory(int processId, int size) {
+        if (validateMemoryRequirement(size)) {
+            freeMemory -= size;
+            cout << "[Memory] Allocated " << size << " MB for Process " << processId 
+                 << ". Free memory: " << freeMemory << " MB" << endl;
+        } else {
+            cout << "[Memory] Allocation FAILED for Process " << processId << endl;
+        }
+    }
+
+    void deallocateMemory(int processId, int size) {
+        freeMemory += size;
+        if (freeMemory > totalMemory) freeMemory = totalMemory;
+        cout << "[Memory] Deallocated " << size << " MB from Process " << processId 
+             << ". Free memory: " << freeMemory << " MB" << endl;
+    }
+};
+
 
 int main() {
     cout << "--- Starting OS Simulation ---\n" << endl;
