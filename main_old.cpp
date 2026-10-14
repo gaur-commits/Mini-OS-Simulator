@@ -5,7 +5,7 @@ using namespace std;
 class Process {
 private:
     int processId;
-    int cpuTicks; 
+    int cpuTicks;
     string state;
     static int totalProcesses;
     
