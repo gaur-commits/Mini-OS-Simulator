@@ -1,0 +1,181 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Process {
+private:
+    int processId;
+    int cpuTicks; 
+    string state;
+    static int totalProcesses;
+    
+public:
+    Process(int id, int ticks) {
+       this->processId = id;
+        this->cpuTicks = ticks;
+        this->state = "Ready";
+        totalProcesses++;
+    }
+
+    Process(int id, int ticks, string startState) {
+       this->processId = id;
+        this->cpuTicks = ticks;
+        this->state = startState;
+        totalProcesses++;
+    }
+
+    int getId() { return processId; }
+    int getTicks() { return cpuTicks; }
+    string getState() { return state; }
+    void setState(string newState) { this->state = newState; }
+
+    void displayInfo() {
+        cout << "Process ID: " << processId 
+             << " | Ticks: " << cpuTicks 
+             << " | State: " << state << endl;
+    }
+
+    void displayInfo(bool showDetailed) {
+        if (showDetailed) {
+            cout << "Process ID: " << processId 
+                 << " | Ticks: " << cpuTicks 
+                 << " | State: " << state << " (Detailed View)" << endl;
+        } else {
+            displayInfo(); 
+        }
+    }
+    static int getTotalProcesses() {
+        return totalProcesses;
+    }
+
+    friend bool operator<(const Process& p1, const Process& p2);
+    friend ostream& operator<<(ostream& out, const Process& p);
+}; 
+
+bool operator<(const Process& p1, const Process& p2) {
+    return p1.cpuTicks < p2.cpuTicks;
+}
+ostream& operator<<(ostream& out, const Process& p) {
+    out << "Process ID: " << p.processId 
+        << " | Ticks: " << p.cpuTicks 
+        << " | State: " << p.state;
+    return out;
+}
+int Process::totalProcesses = 0;
+
+class PriorityProcess : virtual public Process {
+protected:
+    int priorityLevel;
+public:
+    PriorityProcess(int id, int ticks, int priority) : Process(id, ticks) {
+        this->priorityLevel = priority;
+    }
+};
+
+class BackgroundProcess : virtual public Process {
+public:
+    BackgroundProcess(int id, int ticks) : Process(id, ticks) {}
+};
+
+class SystemProcess : public PriorityProcess, public BackgroundProcess {
+public:
+    SystemProcess(int id, int ticks, int priority) 
+        : Process(id, ticks), PriorityProcess(id, ticks, priority), BackgroundProcess(id, ticks) {
+    }
+};
+class Scheduler {
+public:
+    class Info {
+        public:
+            string algorithmName;
+            void show() {
+                cout << "Algorithm in use: " << algorithmName << endl;
+            }
+        };
+    virtual void printSchedulerType() {
+        cout << "Generic OS Scheduler" << endl;
+    }
+    virtual void executeProcess(Process& p) = 0; 
+};
+
+class FCFSScheduler final: public Scheduler {
+public:
+    void executeProcess(Process& p) override {
+        cout << "\n[FCFS] Executing Process " << p.getId() << "..." << endl;
+        p.setState("Running");
+    }
+    void printSchedulerType() override {
+        cout << "First-Come-First-Served (FCFS) Scheduler" << endl;
+    }
+};
+
+class SJFScheduler final: public Scheduler {
+public:
+    void executeProcess(Process& p) override {
+        cout << "\n[SJF] Executing Shortest Process " << p.getId() << "..." << endl;
+        p.setState("Running");
+    }
+    void printSchedulerType() override {
+        cout << "Shortest-Job-First (SJF) Scheduler" << endl;
+    }
+};
+
+class PriorityScheduler final: public Scheduler {
+public:
+    void executeProcess(Process& p) override {
+        cout << "\n[Priority] Executing Process " << p.getId() << " based on priority..." << endl;
+        p.setState("Running");
+    }
+    void printSchedulerType() override {
+        cout << "Priority Scheduler" << endl;
+    }
+};
+
+class RoundRobinScheduler final: public Scheduler {
+private:
+    int timeQuantum; 
+public:
+    RoundRobinScheduler(int quantum = 10) {
+        this->timeQuantum = quantum;
+    }
+    void executeProcess(Process& p) override {
+        cout << "\n[Round Robin] Executing Process " << p.getId() 
+             << " for a time slice of " << timeQuantum << " ticks..." << endl;
+        p.setState("Running");
+    }
+    void printSchedulerType() override {
+        cout << "Round Robin Scheduler (Quantum: " << timeQuantum << ")" << endl;
+    }
+};
+
+
+int main() {
+    cout << "--- Starting OS Simulation ---\n" << endl;
+
+    Process p1(101, 50);                 
+    Process p2(102, 10, "Waiting");      
+
+    p1.displayInfo();
+    p2.displayInfo();
+
+    Process* ptr1 = &p1; 
+    Process* ptr2 = &p2;
+
+    ptr1->displayInfo();
+    ptr2->displayInfo();
+
+    FCFSScheduler fcfs;      
+    SJFScheduler sjf;        
+    
+    Scheduler* activeScheduler; 
+
+    cout << "\n[System] Swapping to FCFS Algorithm..." << endl;
+    activeScheduler = &fcfs; 
+    activeScheduler->executeProcess(*ptr1); 
+
+    cout << "\n[System] Swapping to SJF Algorithm..." << endl;
+    activeScheduler = &sjf; 
+    activeScheduler->executeProcess(*ptr2);
+    cout << "\n--- Simulation Ended ---" << endl;
+    return 0;
+}
