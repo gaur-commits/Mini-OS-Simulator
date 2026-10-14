@@ -183,32 +183,91 @@ public:
 
 
 int main() {
-    cout << "--- Starting OS Simulation ---\n" << endl;
-
-    Process p1(101, 50);                 
-    Process p2(102, 10, "Waiting");      
-
-    p1.displayInfo();
-    p2.displayInfo();
-
-    Process* ptr1 = &p1; 
-    Process* ptr2 = &p2;
-
-    ptr1->displayInfo();
-    ptr2->displayInfo();
-
-    FCFSScheduler fcfs;      
-    SJFScheduler sjf;        
+    MemoryManager ram(1024); 
     
-    Scheduler* activeScheduler; 
+    FCFSScheduler fcfs;      
+    SJFScheduler sjf;
+    PriorityScheduler priority;
+    RoundRobinScheduler rr(20); 
+    
+    Scheduler* activeScheduler = nullptr; 
+    
+    Process* processQueue[10];
+    int processCount = 0;
 
-    cout << "\n[System] Swapping to FCFS Algorithm..." << endl;
-    activeScheduler = &fcfs; 
-    activeScheduler->executeProcess(*ptr1); 
+    int choice = 0;
 
-    cout << "\n[System] Swapping to SJF Algorithm..." << endl;
-    activeScheduler = &sjf; 
-    activeScheduler->executeProcess(*ptr2);
-    cout << "\n--- Simulation Ended ---" << endl;
+    cout << "=== OS Simulator Initialized (1024 MB RAM) ===\n";
+
+    while (choice != 5) {
+        cout << "\n--- OS Control Panel ---\n";
+        cout << "1. Create New Process\n";
+        cout << "2. Allocate Memory for a Process\n";
+        cout << "3. Select & Run Scheduler\n";
+        cout << "4. View Total Processes\n";
+        cout << "5. Shutdown System\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            if (processCount < 10) {
+                int id, ticks;
+                cout << "Enter Process ID (e.g., 101): ";
+                cin >> id;
+                cout << "Enter CPU Ticks required: ";
+                cin >> ticks;
+                
+                processQueue[processCount] = new Process(id, ticks);
+                cout << "[System] Process " << id << " created successfully.\n";
+                processCount++;
+            } else {
+                cout << "[System] Queue full! Cannot create more processes.\n";
+            }
+        } 
+        else if (choice == 2) {
+            int id, size;
+            cout << "Enter Process ID: ";
+            cin >> id;
+            cout << "Enter Memory Size (MB): ";
+            cin >> size;
+            ram.allocateMemory(id, size);
+        } 
+        else if (choice == 3) {
+            if (processCount == 0) {
+                cout << "[System] No processes to run! Create one first.\n";
+                continue;
+            }
+
+            int algoChoice;
+            cout << "Select Algorithm (1=FCFS, 2=SJF, 3=Priority, 4=RoundRobin): ";
+            cin >> algoChoice;
+
+            if (algoChoice == 1) activeScheduler = &fcfs;
+            else if (algoChoice == 2) activeScheduler = &sjf;
+            else if (algoChoice == 3) activeScheduler = &priority;
+            else if (algoChoice == 4) activeScheduler = &rr;
+            else {
+                cout << "Invalid scheduler choice.\n";
+                continue;
+            }
+
+            activeScheduler->printSchedulerType();
+            
+            Process* pToRun = processQueue[processCount - 1];
+            activeScheduler->executeProcess(*pToRun);
+        }
+        else if (choice == 4) {
+            cout << "Total Processes Created: " << Process::getTotalProcesses() << "\n";
+            for (int i = 0; i < processCount; i++) {
+                processQueue[i]->displayInfo();
+            }
+        }
+    }
+
+    cout << "\n[System] Shutting down... cleaning up memory.\n";
+    for (int i = 0; i < processCount; i++) {
+        delete processQueue[i];
+    }
+
     return 0;
 }
