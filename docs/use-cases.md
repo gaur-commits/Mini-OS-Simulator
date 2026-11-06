@@ -1,215 +1,231 @@
 # Mini OS Simulator — Use Case Specifications
 
-> **Scope note:** This document describes the functionality implemented in the current command-line C++ version of the Mini OS Simulator. The scheduler classes display messages and change a process state to `Running`; they do **not** implement the actual FCFS, SJF, Priority, or Round Robin scheduling algorithms.
+> **Scope note:** This document describes the behavior implemented in the current C++ demonstration program. The program creates sample processes, manages simulated memory, selects a scheduler, and displays results. The scheduler classes do not implement the actual FCFS, SJF, Priority, or Round Robin algorithms.
 
 ## System Overview
 
-The user interacts with the simulator through a terminal-based control panel. The current version supports:
+The current program demonstrates the basic structure of a mini operating-system simulator through the following classes:
 
-- Creating up to 10 processes by entering a process ID and CPU tick requirement.
-- Manually requesting simulated memory allocation by entering a process ID and memory size.
-- Selecting one of four scheduler types and invoking its `executeProcess()` method on the most recently created process.
-- Viewing the total number of processes created and their basic information.
-- Shutting down the simulator.
+- `Process` — stores process information and state.
+- `ReadyQueue` — stores processes waiting to be selected.
+- `MemoryManager` — manages simulated RAM.
+- `Scheduler` — abstract base class for scheduler types.
+- `FCFSscheduler`, `SJFscheduler`, `PriorityScheduler`, and `RoundRobinScheduler` — concrete scheduler classes.
+- `SimulationController` — coordinates the simulation.
 
-The simulator starts with 1024 MB of simulated RAM. This value is fixed in `main()` and is not configurable through the menu.
+The program creates a `SimulationController` with 1024 MB of simulated memory. It then creates sample processes, adds them to the controller and ready queue, allocates memory, selects an FCFS scheduler, runs the simulation, and displays the results.
 
-**Important implementation detail:** The memory manager only updates the free-memory counter. It does not maintain an allocation record for each process or verify that a process ID exists. The scheduler classes do not reorder processes, compare their CPU burst times, manage a ready queue, or calculate scheduling statistics.
+The current version is not an interactive menu-based application. User input, process-file loading, and actual scheduling algorithms are not implemented.
 
 ---
 
-## 1. Create Process
+## 1. Add Process to the Simulation
 
-- **Use Case Name:** Create Process
-- **Primary Actor:** User
-- **Stakeholders:**
-  - User — wants to add a process to the simulator.
-  - Simulator — stores the process information for later display and scheduler demonstration.
-- **Preconditions:**
-  - The simulator has been started.
-  - Fewer than 10 processes have been created.
-- **Postconditions:**
-  - A new `Process` object is created and stored in the process queue.
-  - The process is initially assigned the state `Ready`.
-  - The total process count increases by one.
-- **Trigger:** The user selects **Create New Process** from the control panel.
+- **Use Case Name:** Add Process
+- **Primary Actor:** `SimulationController`
+- **Supporting Classes:** `Process`, `ReadyQueue`
+- **Goal:** Store a process in the simulation and ready queue.
+- **Preconditions:** The simulation controller has been created and the ready queue is not full.
+- **Postconditions:** The process is stored in the controller's process list and added to the ready queue.
+- **Trigger:** `SimulationController::addProcess()` is called.
 
 ### Main Flow
 
-1. The simulator displays the control panel.
-2. The user selects **Create New Process**.
-3. The simulator prompts for a process ID.
-4. The user enters the process ID.
-5. The simulator prompts for the required CPU ticks.
-6. The user enters the CPU tick requirement.
-7. The simulator creates a `Process` object with the entered values.
-8. The simulator stores the new process in its process queue.
-9. The simulator displays a success message.
+1. The program creates a `Process` object with an ID, required RAM, and CPU tick count.
+2. The process is added to the controller's process list.
+3. The same process is added to the `ReadyQueue`.
+4. The process initially has the state `New`.
 
-### Alternate Flow 1: Process Queue Is Full
+### Alternate Flow: Ready Queue Is Full
 
-2a. The user selects **Create New Process**, but 10 processes have already been created.  
-3a. The simulator displays a message that the queue is full.  
-4a. No new process is created, and the simulator returns to the control panel.
+1. `ReadyQueue::addProcess()` checks the queue size.
+2. If the queue already contains 10 processes, it throws a `QueueFullException`.
+3. The exception is caught by the calling code.
+4. The process is not added to the queue.
+
+### Relevant Methods
+
+- `SimulationController::addProcess()`
+- `ReadyQueue::addProcess()`
+- `Process::Process()`
 
 ---
 
 ## 2. Allocate Memory for a Process
 
-- **Use Case Name:** Allocate Memory for a Process
-- **Primary Actor:** User
-- **Stakeholders:**
-  - User — wants to allocate a specified amount of simulated RAM.
-  - Memory Manager — updates the amount of free simulated RAM.
-- **Preconditions:**
-  - The simulator is running.
-- **Postconditions:**
-  - If enough free memory is available, the requested amount is subtracted from the free-memory counter.
-  - If insufficient memory is available, the free-memory counter remains unchanged.
-- **Trigger:** The user selects **Allocate Memory for a Process** from the control panel.
+- **Use Case Name:** Allocate Memory
+- **Primary Actor:** `MemoryManager`
+- **Supporting Class:** `Process`
+- **Goal:** Allocate the RAM required by a process.
+- **Preconditions:** A `MemoryManager` and a `Process` object exist.
+- **Postconditions:** The required RAM is subtracted from free memory when enough memory is available.
+- **Trigger:** `MemoryManager::allocateMemory()` is called.
 
 ### Main Flow
 
-1. The user selects **Allocate Memory for a Process**.
-2. The simulator prompts for a process ID.
-3. The user enters a process ID.
-4. The simulator prompts for a memory size in MB.
-5. The user enters the requested memory size.
-6. The `MemoryManager` checks whether the requested size is no greater than the available free memory.
-7. If sufficient memory is available, the manager subtracts the requested size from free memory.
-8. The simulator displays the allocation message and updated free-memory amount.
+1. The memory manager receives a process object.
+2. It reads the process's required RAM using `Process::getRequiredRAM()`.
+3. `validateMemoryRequirement()` checks whether enough free memory is available.
+4. The required amount is subtracted from `freeMemory`.
+5. The amount is added to `allocatedMemory`.
 
-### Alternate Flow 1: Insufficient Free Memory
+### Alternate Flow: Insufficient Memory
 
-6a. The requested memory size is greater than the available free memory.  
-7a. The simulator displays an allocation-failed message.  
-8a. The free-memory amount remains unchanged.
+1. The requested RAM is greater than the available free memory.
+2. `MemoryManager::allocateMemory()` throws an `OutOfMemoryException`.
+3. The derived exception is caught before the base `OSException`.
+4. The free-memory value remains unchanged.
 
-**Note:** The current implementation does not verify that the entered process ID belongs to a process in the simulator. It also does not store individual allocation records or prevent repeated allocations for the same ID.
+### Deallocate Memory
+
+When a process finishes, `MemoryManager::deallocateMemory()` adds its required RAM back to free memory. The current demonstration calls this method for the first two sample processes.
+
+### Relevant Methods
+
+- `MemoryManager::validateMemoryRequirement()`
+- `MemoryManager::allocateMemory()`
+- `MemoryManager::deallocateMemory()`
+- `MemoryManager::getFreeMemory()`
 
 ---
 
-## 3. Select and Run Scheduler
+## 3. Select and Run a Scheduler
 
 - **Use Case Name:** Select and Run Scheduler
-- **Primary Actor:** User
-- **Stakeholders:**
-  - User — wants to select a scheduler type and see it invoked for a process.
-  - Simulator — demonstrates the scheduler class interface and process-state update.
-- **Preconditions:**
-  - The simulator is running.
-  - At least one process has been created.
-- **Postconditions:**
-  - The selected scheduler's type is displayed.
-  - The scheduler's `executeProcess()` method is called for the most recently created process.
-  - That process's state is changed to `Running`.
-- **Trigger:** The user selects **Select & Run Scheduler** from the control panel.
+- **Primary Actor:** `SimulationController`
+- **Supporting Classes:** `Scheduler`, `ReadyQueue`, and a concrete scheduler class
+- **Goal:** Select a process through the scheduler interface.
+- **Preconditions:** A scheduler pointer has been assigned and the ready queue contains at least one process.
+- **Postconditions:** A process is selected and displayed with the temporary state `Running`.
+- **Trigger:** `SimulationController::runSimulation()` is called.
 
 ### Main Flow
 
-1. The user selects **Select & Run Scheduler**.
-2. The simulator checks whether at least one process has been created.
-3. The simulator displays the available scheduler choices:
-   - FCFS
-   - SJF
-   - Priority
-   - Round Robin
-4. The user selects one of the available scheduler types.
-5. The simulator sets the selected scheduler as the active scheduler.
-6. The simulator displays the selected scheduler's type.
-7. The simulator selects the most recently created process.
-8. The selected scheduler displays its execution message and changes that process's state to `Running`.
+1. The controller changes the simulation state to `Running`.
+2. The controller checks whether a scheduler exists.
+3. The scheduler checks whether the ready queue contains a process.
+4. The scheduler's `pickNextProcess()` method is called through a base-class pointer.
+5. The selected process is given the temporary state `Running`.
+6. The selected process is displayed.
 
-### Alternate Flow 1: No Processes Available
+### Alternate Flow: No Scheduler or Process Available
 
-2a. The simulator finds that no processes have been created.  
-3a. The simulator displays a message asking the user to create a process first.  
-4a. The scheduler is not invoked, and the simulator returns to the control panel.
+1. The controller finds that no scheduler has been assigned or the ready queue is empty.
+2. The controller displays a message that no scheduler or process is available.
+3. No process is selected.
 
-### Alternate Flow 2: Invalid Scheduler Selection
+### Scheduler Demonstration Behavior
 
-4b. The user enters a number outside the available choices.  
-5b. The simulator displays an invalid scheduler choice message.  
-6b. No scheduler is invoked, and the simulator returns to the control panel.
+All four concrete scheduler classes currently return the first process in the ready queue:
 
-### Scheduler Demonstration Behaviour
+- `FCFSscheduler` — placeholder for FCFS selection.
+- `SJFscheduler` — placeholder for SJF selection.
+- `PriorityScheduler` — placeholder for priority-based selection.
+- `RoundRobinScheduler` — placeholder for Round Robin selection and stores a time quantum.
 
-The four scheduler classes currently provide demonstration messages:
+The classes do not compare CPU ticks, compare priorities, rotate processes, or calculate scheduling results.
 
-- **FCFS:** Displays an FCFS execution message.
-- **SJF:** Displays an SJF execution message.
-- **Priority:** Displays a priority-based execution message.
-- **Round Robin:** Displays an execution message that includes its configured time quantum (20 ticks in the current `main()` function).
+### Relevant Methods
 
-These classes do **not** implement the corresponding scheduling algorithms. In particular, the current version does not order processes by arrival time, burst time, or priority; does not rotate processes through a ready queue; and does not calculate waiting time, turnaround time, or completion time. Only the most recently created process is passed to `executeProcess()`.
+- `Scheduler::checkAvailability()`
+- `Scheduler::pickNextProcess()`
+- `FCFSscheduler::pickNextProcess()`
+- `SJFscheduler::pickNextProcess()`
+- `PriorityScheduler::pickNextProcess()`
+- `RoundRobinScheduler::pickNextProcess()`
+- `SimulationController::runSimulation()`
 
 ---
 
-## 4. View Total Processes
+## 4. Generate Simulation Results
 
-- **Use Case Name:** View Total Processes
-- **Primary Actor:** User
-- **Stakeholders:**
-  - User — wants to see how many processes have been created and inspect their basic information.
-  - Simulator — displays the stored process information.
-- **Preconditions:**
-  - The simulator is running.
-- **Postconditions:**
-  - The total number of created processes is displayed.
-  - Basic information for each created process is displayed.
-  - No process information is modified.
-- **Trigger:** The user selects **View Total Processes** from the control panel.
+- **Use Case Name:** Generate Results
+- **Primary Actor:** `SimulationController`
+- **Supporting Classes:** `Process`, `MemoryManager`
+- **Goal:** Display the current simulation state, free memory, and process information.
+- **Preconditions:** The controller has been created.
+- **Postconditions:** Simulation information is printed to the console.
+- **Trigger:** `SimulationController::generateResults()` is called.
 
 ### Main Flow
 
-1. The user selects **View Total Processes**.
-2. The simulator displays the total number of processes created.
-3. The simulator iterates through the process queue.
-4. For each process, the simulator displays its process ID, CPU ticks, and current state.
-5. The simulator returns to the control panel.
+1. The controller displays the simulation state.
+2. The controller displays the amount of free memory.
+3. The controller iterates through its stored process list.
+4. Each process displays its detailed information.
+5. The overloaded `displayInfo(bool)` method is used for detailed output.
 
-### Alternate Flow: No Processes Have Been Created
+### Relevant Methods
 
-If no processes have been created, the simulator displays a total count of zero and does not display any process entries.
+- `SimulationController::generateResults()`
+- `Process::displayInfo()`
+- `Process::displayInfo(bool)`
+- `operator<<`
+
+**Implementation note:** The scheduler receives and returns a `Process` object by value. Therefore, changing the selected process to `Running` changes the displayed copy, not the original process stored in the controller's list.
 
 ---
 
-## 5. Shutdown System
+## 5. Handle Simulation Errors
 
-- **Use Case Name:** Shutdown System
-- **Primary Actor:** User
-- **Stakeholders:**
-  - User — wants to close the simulator.
-  - Simulator — needs to release dynamically allocated process objects before terminating.
-- **Preconditions:**
-  - The simulator is running.
-- **Postconditions:**
-  - The control loop ends.
-  - Dynamically allocated process objects are deleted.
-  - The application terminates.
-- **Trigger:** The user selects **Shutdown System** from the control panel.
+- **Use Case Name:** Handle Simulation Errors
+- **Primary Actor:** `SimulationController`
+- **Supporting Classes:** `OSException`, `OutOfMemoryException`, `QueueFullException`
+- **Goal:** Report memory and ready-queue errors without terminating unexpectedly.
+- **Trigger:** An invalid resource request is made.
 
 ### Main Flow
 
-1. The user selects **Shutdown System**.
-2. The simulator exits the control loop.
-3. The simulator displays a shutdown message.
-4. The simulator deletes the dynamically allocated process objects.
-5. The application terminates.
+1. The program enters a `try` block.
+2. A memory or queue operation detects an error.
+3. The operation throws a user-defined exception.
+4. A specific derived exception is caught first.
+5. A general `OSException` catch block handles other operating-system errors.
+6. The error message is displayed using `what()`.
+
+### Supported Exceptions
+
+- `OutOfMemoryException` — insufficient simulated RAM.
+- `QueueFullException` — the ready queue has reached its maximum size.
+- `OSException` — common base class for simulator exceptions.
+
+---
+
+## Demonstration Features
+
+The current code also demonstrates the following C++ concepts:
+
+- Inheritance through the scheduler hierarchy.
+- Virtual and pure virtual functions.
+- Access specifiers.
+- Constructor and method overloading.
+- Static process counter and static accessor function.
+- Nested `Scheduler::Info` class.
+- Friend stream operator overloading using `operator<<`.
+- Pointers to base and derived objects.
+- Object slicing using `PriorityProcess` copied into a `Process` object.
+- User-defined exception classes.
+
+These demonstrations support the project requirements but do not represent additional simulator use cases.
 
 ---
 
 ## Functionality Not Implemented in the Current Version
 
-The following features may be considered for future development, but they should not be presented as implemented functionality:
+The following features are not implemented and should not be described as current functionality:
 
-- Loading process information from an input file.
-- Modifying or removing an existing process through the menu.
-- Actual FCFS, SJF, Priority, or Round Robin scheduling logic.
-- Scheduling all processes according to arrival time, burst time, or priority.
-- A ready queue, time-based process rotation, or real context switching.
-- Waiting-time, turnaround-time, completion-time, or average scheduling-statistic calculations.
-- Pausing and resuming a simulation.
-- Configuring total RAM through the menu.
-- Tracking memory allocations against individual process IDs or validating process IDs during allocation.
-- Automatically allocating or releasing memory when processes are created, executed, or terminated.
+- Interactive menu-based process creation.
+- Loading process information from a file.
+- Actual FCFS scheduling logic.
+- Actual SJF scheduling logic.
+- Actual Priority scheduling logic.
+- Actual Round Robin scheduling logic.
+- Scheduling based on arrival time, CPU burst time, or priority.
+- Process rotation using a time quantum.
+- Waiting-time, turnaround-time, completion-time, or average-statistic calculations.
+- Real process execution or context switching.
+- Multithreading and thread synchronization.
+- Virtual base classes.
+- Java-style `throws` declarations and `finally` blocks.
+- Automatic process termination management.
+- Allocation records linked to individual process IDs.
