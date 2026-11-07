@@ -1,146 +1,226 @@
 # Noun-Verb Analysis
 
-## Use Case 1: Create Process - Combined Noun & Verb Analysis
+---
 
-### 1. Raw Candidate List
+## Use Case 1: Create Process
 
-   **Candidate Nouns:** user, system, program, input file, machine, process, memory, controller, tracking list, terminal, command, file name, line, integers, id, memory requirement, cpu ticks, message, directory, file error, warning, setup.
+### Raw Candidate Nouns
 
-   **Candidate Verbs:** starts, running, exists, created, added, selects, load, prompts, enter, inputs, opens, reads, parses, closes, displays, loops, catches, encounters, ignores, continues, finishes.
+user, system, process, process ID, CPU ticks, process state, process queue, process count, array, constructor, message, control panel.
 
-### 2. Noun and Verb filtering
+### Raw Candidate Verbs
 
-   * **Filter 1: Outside the system? (actor not class)**
+selects, enters, prompts, creates, initializes, stores, increments, displays, checks, allocates.
 
-     * Discarded Nouns: user, machine, terminal. (Reason: These are humans or physical hardware outside our software code).
+### Filtering
 
-     * Discarded Verbs: selects, enter, inputs. (Reason: These are actions performed physically by the human user, not functions the system executes).
+* **External actor:** `user` 
+* **User actions:** `selects` and `enters` 
+* **Attributes and values:** `process ID`, `CPU ticks`, `process state`, and `process count`
+* **Interface terms:** `message`, `prompts`, and `displays`
+* **Implementation details:** `process queue` and `array` were combined because the process queue is implemented as an array in `main()`.
+* **Broad concepts:** `system` and `control panel`
 
-   * **Filter 2: A property of something else? (attribute not class)**
+### Surviving Class
 
-     * Discarded Nouns: file name, line, integers, id, memory requirement, cpu ticks, directory, message, command, file error, warning. (Reason: These are primitive data variables, properties of a process, or UI text strings).
+```text
+Process
+```
 
-     * Discarded Verbs: exists, running, prompts, displays. (Reason: These describe simple UI text outputs or simple states/properties, rather than core architectural operations).
+### Relevant Attributes
 
-   * **Filter 3: A synonym already listed? (merge them)**
+```text
+processId
+cpuTicks
+state
+```
 
-     * Merged Nouns: input file, setup. (Reason: 'Input file' is merged into the general file parsing logic; 'setup' is just a synonym for the creation process).
+### Surviving Verbs and Responsibilities
 
-     * Merged Verbs: opens, closes, catches, encounters, ignores, continues. (Reason: These basic file-reading loop steps and error handling are merged into the overarching read and parse actions).
+```text
+create process
+initialize process
+store process
+count processes
+```
 
-   * **Filter 4: Vague or whole system? (discard)**
+---
 
-      * Discarded Nouns: system, program. (Reason: Far too broad; they represent the entire application boundary, not a specific blueprint).
+## Use Case 2: Allocate Memory for a Process
 
-      * Discarded Verbs: starts, finishes, loops. (Reason: Too generic; they just describe the general flow of time or language constructs, not a specific domain job).
+### Raw Candidate Nouns
 
-### 3. Surviving Classes and methods
+user, memory manager, memory, RAM, process, process ID, memory size, total memory, free memory, allocation message.
 
-   * Surviving Nouns (The Classes):
+### Raw Candidate Verbs
 
-     * controller (becomes SimulationController)
+selects, enters, requests, validates, checks, allocates, subtracts, displays, fails.
 
-     * process (becomes Process)
+### Filtering
 
-     * memory (becomes MemoryManager)
+* **External actor:** `user`
+* **User actions:** `selects`, `enters`, and `requests` 
+* **Attributes and values:** `process ID`, `memory size`, `total memory`, and `free memory`
+* **Synonyms:** `RAM` and `memory` were combined.
+* **Output terms:** `allocation message`, `displays`, and `fails`
+* **Merged verbs:** `checks` and `validates` were combined into `validates`.
 
-     * tracking list (becomes ReadyQueue)
+### Surviving Class
 
-   * Surviving Verbs (The Methods):
+```text
+MemoryManager
+```
 
-     * load, reads, parses, created, added.
+### Relevant Attributes
 
-## Use Case 2: Manage Simulation - Combined Noun & Verb Analysis
+```text
+totalMemory
+freeMemory
+```
 
-### 1. Raw Candidate List
+### Surviving Verbs and Responsibilities
 
-**Candidate Nouns:** user, simulation user, system, simulation, process, operation, management option, information, required information, request, change, simulation management screen, command, terminal, error message, updated simulation information, current operation.
+```text
+validate memory requirement
+allocate memory
+deallocate memory
+```
 
-**Candidate Verbs:** selects, displays, viewing, modifying, removing, asks, enter, provides, validates, applies, changes, cancels, discards, returns, find, exists, initialized, running.
+---
 
-### 2. Noun and Verb filtering
+## Use Case 3: Select and Run Scheduler
 
-- **Filter 1: Outside the system? (actor not class)**
+### Raw Candidate Nouns
 
-  - Discarded Nouns: user, simulation user, terminal. (Reason: The user is an external actor interacting with the simulator, while the terminal is the external interface through which the interaction takes place).
-  - Discarded Verbs: selects, enter, provides. (Reason: These are actions performed by the human user, not operations performed by the system).
+user, scheduler, scheduling algorithm, FCFS, SJF, priority, Round Robin, process, process queue, active scheduler, algorithm choice, time quantum, process state, execution message.
 
-- **Filter 2: A property of something else? (attribute not class)**
+### Raw Candidate Verbs
 
-  - Discarded Nouns: management option, information, required information, change, command, error message, updated simulation information, current operation. (Reason: These represent input data, output information, temporary state, or details associated with a simulation operation rather than independent objects).
-  - Discarded Verbs: displays, asks, returns. (Reason: These mainly describe user-interface/output behavior rather than operations representing independent domain responsibilities).
+selects, enters, checks, chooses, assigns, prints, executes, changes, sets, displays, schedules.
 
-- **Filter 3: A synonym already listed? (merge them)**
+### Filtering
 
-  - Merged Nouns: simulation user → user. (Reason: Both refer to the same actor interacting with the simulator).
-  - Merged Verbs: viewing → displays, modifying → changes, removing → changes. (Reason: These represent specific forms of displaying or changing the state of a process/simulation and do not need separate representations as duplicate concepts).
-  - Merged Verbs: discards → cancels. (Reason: Discarding the current operation is the result of cancelling it).
+* **External actor:** `user`
+* **User actions:** `selects`, `enters`, and `chooses`
+* **Attributes and values:** `algorithm choice`, `time quantum`, and `process state`
+* **Output terms:** `execution message`, `prints`, and `displays`
+* **Scheduler types:** `FCFS`, `SJF`, `Priority`, and `Round Robin`
+* **Merged verbs:** `chooses` and `assigns`
 
-- **Filter 4: Vague or whole system? (discard)**
+### Surviving Classes
 
-  - Discarded Nouns: system, operation, request. (Reason: These are too broad or generic to represent specific objects in the simulation model).
-  - Discarded Verbs: running, exists, initialized. (Reason: These describe the state or lifecycle of the simulation rather than a specific operation that should become a method).
+```text
+Scheduler
+Process
+```
 
-### 3. Surviving Classes and methods
+### Surviving Verbs and Responsibilities
 
-- **Surviving Nouns (The Classes):**
+```text
+select scheduler
+execute process
+change process state
+display scheduler type
+```
 
-  - simulation (becomes `Simulation`)
-  - process (becomes `Process`)
+---
 
-- **Surviving Verbs (The Methods):**
+## Use Case 4: View Total Processes
 
-  - validates
-  - applies
-  - changes
-  - displays
-  - cancels
-  - find
+### Raw Candidate Nouns
 
-## Use Case 3: Run Simulation - Combined Noun & Verb Analysis
+user, process, process queue, process count, process ID, CPU ticks, process state, process information, total processes, output.
 
-### 1. Raw Candidate List
+### Raw Candidate Verbs
 
-**Candidate Nouns:** user, simulation user, system, simulation, process, scheduling algorithm, algorithm, method, simulation results, results, command, terminal, option, message, main menu, simulation configuration.
+selects, requests, counts, gets, iterates, retrieves, displays, prints.
 
-**Candidate Verbs:** selects, checks, available, created, selected, runs, executes, generates, displays, observes, view, finds, asks, returns, resumes, continues.
+### Filtering
 
-### 2. Noun and Verb filtering
+* **External actor:** `user`
+* **User actions:** `selects` and `requests`
+* **Attributes:** `process count`, `process ID`, `CPU ticks`, `process state`, and `total processes`
+* **Output terms:** `output`, `displays`, and `prints`
+* **Merged nouns:** `process information` and `output` were combined as displayed process information.
+* **Merged verbs:** `gets` and `retrieves` were combined into `gets`.
 
-- **Filter 1: Outside the system? (actor not class)**
+### Surviving Class
 
-  - Discarded Nouns: user, simulation user, terminal. (Reason: The user is an external actor interacting with the simulator, while the terminal is the external interface through which the interaction takes place).
-  - Discarded Verbs: selects, observes, view. (Reason: These are actions performed by the human user rather than operations performed by the simulator).
+```text
+Process
+```
 
-- **Filter 2: A property of something else? (attribute not class)**
+### Surviving Verbs and Responsibilities
 
-  - Discarded Nouns: command, option, message, simulation results, results, main menu, simulation configuration. (Reason: These represent user-interface elements, output data, or information/state associated with the simulation rather than independent objects).
-  - Discarded Verbs: displays, asks, returns. (Reason: These mainly describe user-interface or control-flow behavior rather than core simulation operations).
+```text
+count processes
+get process information
+display process information
+```
 
-- **Filter 3: A synonym already listed? (merge them)**
+---
 
-  - Merged Nouns: algorithm, method → scheduling algorithm. (Reason: Both refer to the scheduling method selected for executing the simulation).
-  - Merged Nouns: simulation results, results → results. (Reason: Both refer to the output produced after running the simulation).
-  - Merged Verbs: executes → runs. (Reason: Executing the simulation and running the simulation represent the same operation).
-  - Merged Verbs: finds, available → checks. (Reason: These describe the process of checking whether the required processes or scheduling algorithm are available).
+## Use Case 5: Shutdown System
 
-- **Filter 4: Vague or whole system? (discard)**
+### Raw Candidate Nouns
 
-  - Discarded Nouns: system, simulation. (Reason: System represents the whole application, while simulation is too broad if it is being treated as the overall system operation rather than a specific domain object).
-  - Discarded Verbs: continues, resumes, created, selected. (Reason: These mainly describe the state or flow of an operation rather than specific responsibilities that should become methods).
+user, system, simulator, process, process object, dynamically allocated memory, cleanup message, application.
 
-### 3. Surviving Classes and methods
+### Raw Candidate Verbs
 
-- **Surviving Nouns (The Classes):**
+selects, chooses, shuts down, exits, deletes, cleans up, releases, terminates, displays.
 
-  - process (becomes `Process`)
-  - scheduling algorithm (becomes `SchedulingAlgorithm`)
+### Filtering
 
-- **Surviving Verbs (The Methods):**
+* **External actor:** `user`
+* **User actions:** `selects` and `chooses`
+* **Output terms:** `cleanup message` and `displays`
+* **Broad concepts:** `system`, `simulator`, and `application`
+* **Merged verbs:** `shuts down`, `exits`, and `terminates` were grouped as termination behavior.
+* **Cleanup verbs:** `cleans up` and `releases` were grouped as deleting allocated process objects.
 
-  - checks
-  - runs
-  - generates
+### Surviving Class
 
+```text
+Process
+```
 
+### Surviving Verbs and Responsibilities
 
+```text
+terminate system
+delete process objects
+release allocated objects
+```
+
+---
+
+## Initial Surviving Class List from the Noun-Verb Analysis
+
+The following are the core classes identified:
+
+| Class | Reason for surviving the analysis |
+|---|---|
+| `Process` | Represents a process being created, executed, viewed, and deleted. |
+| `MemoryManager` | Manages simulated memory allocation and deallocation. |
+| `Scheduler` | Schedules the Algorithms. |
+
+---
+
+## Additional Classes Introduced During Implementation
+
+While implementing `main.cpp`, additional classes were introduced to support inheritance, polymorphism, and the representation of different process and scheduler types.
+
+These classes were not required to appear in the initial surviving class list because they are implementation-level specializations of the core concepts identified above.
+
+| Implementation Class | Purpose in the Code |
+|---|---|
+| `PriorityProcess` | Specialized process type that adds a priority value. |
+| `BackgroundProcess` | Specialized process type for background processing. |
+| `SystemProcess` | Combines behavior from priority and background processes. |
+| `FCFSScheduler` | Concrete scheduler derived from `Scheduler`. |
+| `SJFScheduler` | Concrete scheduler derived from `Scheduler`. |
+| `PriorityScheduler` | Concrete scheduler derived from `Scheduler`. |
+| `RoundRobinScheduler` | Concrete scheduler derived from `Scheduler` and stores a time quantum. |
+
+The `Scheduler::Info` nested class is also an implementation detail used by the scheduler hierarchy.
