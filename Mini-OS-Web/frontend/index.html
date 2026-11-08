@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+ <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name = "viewport" content="width=device-width , initial-scale=1.0">
+        <title>Mini OS Simulator</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+    <h1>Mini OS Simulator</h1>
+    <p>Manage processes, allocate RAM, and simulate CPU scheduling algorithms.</p>
+
+    <h2>Process Manager</h2>
+
+    <form id="process-form">
+        <label for="process-scheduler">Scheduler:</label>
+        <select id="process-scheduler" name="scheduler">
+            <option value="FCFS">FCFS</option>
+            <option value="SJF">SJF</option>
+            <option value="Priority">Priority</option>
+            <option value="RoundRobin">Round Robin</option>
+        </select>
+    
+      <label for="process-id">Process ID:</label>
+      <input type="number" id="process-id" name="processId" min="1" required>
+
+      <label for="process-ram">Required RAM (MB):</label>
+      <input type="number" id="process-ram" name="requiredRAM" min="1" required>
+
+      <label for="process-ticks">CPU Ticks:</label>
+      <input type="number" id="process-ticks" name="totalCpuTicks" min="1" required>
+
+      <button type="submit" id="add-process-btn">Add Process</button>
+    </form>
+
+    <h2>Scheduler Controls</h2>
+    <button type="button" id="run-simulation-btn">Run Simulation</button>
+
+    <h2>Ready Queue</h2>
+    <table id="process-table">
+      <thead>
+        <tr>
+          <th>Process ID</th>
+          <th>Required RAM (MB)</th>
+          <th>CPU Ticks</th>
+          <th>State</th>
+           <th>Scheduler</th> 
+        </tr>
+      </thead>
+      <tbody id="process-list-body">
+      </tbody>
+    </table>
+
+    <div id="results-panel">
+      <h2>Simulation Results</h2>
+
+      <div class="status-card">
+        <p>Simulation State: <span id="simulation-state">Created</span></p>
+        <p>Free Memory: <span id="free-memory">1024</span> MB</p>
+      </div>
+
+      <div id="execution-log" class="log-box">
+        <p class="log-message">Awaiting simulation run...</p>
+      </div>
+    </div>
+     <script src="script.js"></script> 
+  </body>
+</html>

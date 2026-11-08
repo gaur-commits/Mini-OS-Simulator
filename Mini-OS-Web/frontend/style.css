@@ -1,0 +1,147 @@
+/* Document body baseline setup */
+body {
+  background-color: #f4f6f8;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333333;
+}
+
+/* Page headings */
+h1 {
+  text-align: center;
+  font-size: 28px;
+  color: #1a252f;
+}
+
+h2 {
+  font-size: 20px;
+  color: #2c3e50;
+}
+
+/* Process input form */
+#process-form {
+  padding: 16px;
+  border: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Form controls */
+label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+input {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* General button styling */
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Individual button actions */
+#add-process-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+#run-simulation-btn {
+  background-color: rgb(46, 204, 113);
+  color: white;
+}
+
+/* Process table */
+#process-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  background-color: #ffffff;
+}
+
+#process-table th, 
+#process-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+#process-table th {
+  background-color: #2c3e50;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+#process-table tbody tr:nth-child(even) {
+  background-color: #f9fbfd;
+}
+
+/* Results section and metric cards */
+#results-panel {
+  margin: 20px 0;
+  padding: 16px;
+  border: 1px solid #dcdcdc;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.status-card {
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+#simulation-state {
+  color: #e67e22;
+  font-weight: bold;
+}
+
+#free-memory {
+  color: rgb(41, 128, 185);
+  font-weight: bold;
+}
+
+/* Terminal log box */
+.log-box {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #1a252f;
+  border-radius: 6px;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+input, select {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+ .log-error { color: #ff6b6b; }
