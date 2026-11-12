@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -39,8 +40,11 @@ private:
     static int totalProcesses; // Static variable
 
 public:
+    // Default constructor is used when a process is not found.
+    Process() : processId(0), requiredRAM(0), totalCpuTicks(0), state("New") {}
+
     // Constructor and this pointer
-    Process(int id = 0, int ram = 0, int ticks = 0)
+    Process(int id, int ram, int ticks)
         : processId(id), requiredRAM(ram), totalCpuTicks(ticks), state("New") {
         totalProcesses++;
     }
@@ -308,7 +312,22 @@ public:
         }
 
         Process selectedProcess = scheduler->pickNextProcess();
-        selectedProcess.setState("Running");
+
+        if (selectedProcess.getId() == 0) {
+            cout << "No process is available for execution.\n";
+            return;
+        }
+
+        // Update the matching process stored by the controller rather than
+        // changing only a temporary copy returned by the ready queue.
+        for (Process& process : processes) {
+            if (process.getId() == selectedProcess.getId()) {
+                process.setState("Running");
+                selectedProcess = process;
+                break;
+            }
+        }
+
         cout << "Selected process: " << selectedProcess << endl;
     }
 
@@ -329,46 +348,220 @@ public:
     MemoryManager& getMemoryManager() { return memoryManager; }
 };
 
+int readInteger(const string& prompt) {
+    int value;
+
+    while (true) {
+        cout << prompt;
+        if (cin >> value) {
+            return value;
+        }
+
+        cout << "Invalid input. Please enter a number.\n";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
+
+void displayMenu() {
+    cout << "\n----------------------------------------\n";
+    cout << "              CONTROL PANEL             \n";
+    cout << "----------------------------------------\n";
+    cout << "1. Create New Process\n";
+    cout << "2. Allocate Memory for a Process\n";
+    cout << "3. Deallocate Memory for a Process\n";
+    cout << "4. Select Scheduler\n";
+    cout << "5. Run Selected Scheduler\n";
+    cout << "6. View Processes and System Status\n";
+    cout << "7. Remove Process\n";
+    cout << "8. Shutdown System\n";
+    cout << "----------------------------------------\n";
+}
+
+void createProcess(SimulationController& controller) {
+    int processId = readInteger("Enter process ID: ");
+    int requiredRAM = readInteger("Enter required RAM (MB): ");
+    int cpuTicks = readInteger("Enter required CPU ticks: ");
+
+    if (processId <= 0 || requiredRAM < 0 || cpuTicks < 0) {
+        cout << "Invalid process details. Process was not created.\n";
+        return;
+    }
+
+    if (controller.findProcess(processId).getId() != 0) {
+        cout << "A process with this ID already exists.\n";
+        return;
+    }
+
+    Process process(processId, requiredRAM, cpuTicks);
+    controller.addProcess(process);
+    cout << "Process created successfully.\n";
+}
+
+void allocateMemory(SimulationController& controller) {
+    int processId = readInteger("Enter process ID: ");
+    Process process = controller.findProcess(processId);
+
+    if (process.getId() == 0) {
+        cout << "Process not found.\n";
+        return;
+    }
+
+    controller.getMemoryManager().allocateMemory(process);
+    cout << "Memory allocated successfully.\n";
+    cout << "Free memory: "
+         << controller.getMemoryManager().getFreeMemory() << " MB\n";
+}
+
+void deallocateMemory(SimulationController& controller) {
+    int processId = readInteger("Enter process ID: ");
+    Process process = controller.findProcess(processId);
+
+    if (process.getId() == 0) {
+        cout << "Process not found.\n";
+        return;
+    }
+
+    controller.getMemoryManager().deallocateMemory(process);
+    cout << "Memory deallocated successfully.\n";
+    cout << "Free memory: "
+         << controller.getMemoryManager().getFreeMemory() << " MB\n";
+}
+
+void selectScheduler(
+    SimulationController& controller,
+    FCFSscheduler& fcfs,
+    SJFscheduler& sjf,
+    PriorityScheduler& priority,
+    RoundRobinScheduler& roundRobin) {
+
+    cout << "\nSelect a scheduler:\n";
+    cout << "1. First-Come, First-Served (FCFS)\n";
+    cout << "2. Shortest Job First (SJF)\n";
+    cout << "3. Priority Scheduling\n";
+    cout << "4. Round Robin\n";
+
+    int choice = readInteger("Enter scheduler choice: ");
+
+    switch (choice) {
+        case 1:
+            controller.setScheduler(&fcfs);
+            cout << "FCFS scheduler selected.\n";
+            break;
+        case 2:
+            controller.setScheduler(&sjf);
+            cout << "SJF scheduler selected.\n";
+            break;
+        case 3:
+            controller.setScheduler(&priority);
+            cout << "Priority scheduler selected.\n";
+            break;
+        case 4:
+            controller.setScheduler(&roundRobin);
+            cout << "Round Robin scheduler selected.\n";
+            break;
+        default:
+            cout << "Invalid scheduler choice.\n";
+    }
+}
+
+void viewSystemStatus(const SimulationController& controller) {
+    controller.generateResults();
+    cout << "Total processes created: "
+         << Process::getTotalProcesses() << "\n";
+}
+
+void removeProcess(SimulationController& controller) {
+    int processId = readInteger("Enter process ID to remove: ");
+    Process process = controller.findProcess(processId);
+
+    if (process.getId() == 0) {
+        cout << "Process not found.\n";
+        return;
+    }
+
+    controller.removeProcess(processId);
+    cout << "Process removed successfully.\n";
+}
+
+void handleMenuChoice(
+    int choice,
+    SimulationController& controller,
+    FCFSscheduler& fcfs,
+    SJFscheduler& sjf,
+    PriorityScheduler& priority,
+    RoundRobinScheduler& roundRobin,
+    bool& running) {
+
+    switch (choice) {
+        case 1:
+            createProcess(controller);
+            break;
+        case 2:
+            allocateMemory(controller);
+            break;
+        case 3:
+            deallocateMemory(controller);
+            break;
+        case 4:
+            selectScheduler(controller, fcfs, sjf, priority, roundRobin);
+            break;
+        case 5:
+            controller.runSimulation();
+            break;
+        case 6:
+            viewSystemStatus(controller);
+            break;
+        case 7:
+            removeProcess(controller);
+            break;
+        case 8:
+            cout << "Shutting down the simulator...\n";
+            running = false;
+            break;
+        default:
+            cout << "Invalid menu choice. Please select an option from 1 to 8.\n";
+    }
+}
+
 int main() {
-    cout << "=== Mini OS Simulator ===\n\n";
+    cout << "=== Mini OS Simulator ===\n";
 
     SimulationController controller(1024);
 
-    Process process1(101, 200, 50);
-    Process process2(102, 150, 30);
+    // Scheduler objects remain alive while the menu is running.
+    FCFSscheduler fcfs(&controller.getReadyQueue());
+    SJFscheduler sjf(&controller.getReadyQueue());
+    PriorityScheduler priority(&controller.getReadyQueue());
+    RoundRobinScheduler roundRobin(&controller.getReadyQueue(), 20);
 
-    // Object slicing demonstration
-    PriorityProcess priorityProcess(103, 100, 20, 1);
-    Process slicedProcess = priorityProcess;
-    cout << "Sliced process: " << slicedProcess << "\n\n";
+    bool running = true;
 
-    try { // try
-        controller.addProcess(process1);
-        controller.addProcess(process2);
-        controller.addProcess(priorityProcess);
+    while (running) {
+        displayMenu();
 
-        FCFSscheduler fcfs(&controller.getReadyQueue());
-        Scheduler* schedulerPointer = &fcfs; // Pointer to derived object
-        controller.setScheduler(schedulerPointer);
-
-        controller.getMemoryManager().allocateMemory(process1);
-        controller.getMemoryManager().allocateMemory(process2);
-
-        controller.runSimulation();
-        controller.generateResults();
-
-        controller.getMemoryManager().deallocateMemory(process1);
-        controller.getMemoryManager().deallocateMemory(process2);
+        try {
+            int choice = readInteger("Enter your choice: ");
+            handleMenuChoice(
+                choice,
+                controller,
+                fcfs,
+                sjf,
+                priority,
+                roundRobin,
+                running);
+        }
+        catch (const OutOfMemoryException& exception) {
+            cout << "Memory error: " << exception.what() << "\n";
+        }
+        catch (const QueueFullException& exception) {
+            cout << "Queue error: " << exception.what() << "\n";
+        }
+        catch (const OSException& exception) {
+            cout << "OS error: " << exception.what() << "\n";
+        }
     }
-    catch (const OutOfMemoryException& exception) { // Derived catch
-        cout << "Memory error: " << exception.what() << endl;
-    }
-    catch (const OSException& exception) { // Base catch
-        cout << "OS error: " << exception.what() << endl;
-    }
 
-    cout << "\nTotal processes created: "
-         << Process::getTotalProcesses() << endl;
-
+    cout << "Simulator terminated successfully.\n";
     return 0;
 }
