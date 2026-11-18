@@ -1,0 +1,22 @@
+If the compiler is compatible
+
+git --version
+g++ --version
+
+For cloning
+cd "$HOME\Desktop"
+git clone https://github.com/gaur-commits/Mini-OS-Simulator.git
+cd Mini-OS-Simulator
+
+To run the simulation
+g++ main.cpp -o simulator.exe -std=c++17
+.\simulator.exe
+
+Just remove .exe for linux
+
+For web application
+cd .\Mini-OS-Web\backend
+g++ main.cpp -o server.exe -std=c++17 -pthread -lws2_32          for windows
+g++ main.cpp -o server -std=c++17 -pthread                       for linux
+.\server.exe
+
